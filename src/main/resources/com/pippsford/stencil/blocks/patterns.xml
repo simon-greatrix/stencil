@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <!-- Standard sub patterns -->
+  <entry key="!ID_CHARS!">
+    # Match unicode regular expression "word" characters, currency symbols, period and solidus
+    [ \w \p{Sc} . / ]+
+  </entry>
+
+  <entry key="!SEPARATOR!">
+    # Separator which matches comma, or whitespace.
+    # The final whitespace is greedy as that is required for a following negative assertion.
+    (?: \s* , \s*+ )
+  </entry>
+
+  <entry key="!ID!">
+    # Capturing group which matches a collection of ID characters.
+    ( !ID_CHARS! )
+  </entry>
+
+  <entry key="!FLAGS!">
+    # Optional processing flags, which is a separated list of IDs followed by a ':'
+    (?:
+    (
+    !ID_CHARS!
+    (?:
+    !SEPARATOR!
+    !ID_CHARS!
+    )*
+    )?
+    \s* : \s*
+    )?
+  </entry>
+
+  <entry key="!LITERAL!">
+    (?: ' (?: [^'] | '' )* ' )
+  </entry>
+
+  <entry key="!APPLY_FIRST_ARGUMENT!">
+    (?: (?: !ID_CHARS! ) | !LITERAL! )?
+  </entry>
+
+  <entry key="!APPLY_NEXT_ARGUMENT!">
+    (?: !SEPARATOR! (?: (?: !ID_CHARS! ) | !LITERAL! )? )
+  </entry>
+
+  <entry key="!MARKER!"><![CDATA[
+    # Marker for "here" documents. Any visible character except for '{', '}', '<', '>', '[', and ']'.
+    (?<marker>
+      [
+        \p{Graph}
+        && [^ {}<>\[\] ]
+      ] +
+    )
+  ]]>
+  </entry>
+
+  <entry key="!SETTING!">
+    # Match and ID=ID setting.
+    !ID_CHARS! \s* = \s* !ID_CHARS!
+  </entry>
+
+  <!-- Pattern to capture the values given in a setting. -->
+  <entry key="SETTING_VALUES">
+    (!ID_CHARS!) \s* = \s* (!ID_CHARS!)
+  </entry>
+
+  <entry key="!STYLE!">
+    short | medium | long | full
+  </entry>
+
+  <!-- Block definitions -->
+
+  <!-- Apply a function, with optional arguments, to the current data. -->
+  <!-- [apply f(a1,a2)] -->
+  <entry key="APPLY">
+    \[ \s*
+    apply \s+
+    # Optional output parameter
+    (?: !ID! \s* = \s* )?
+    # function name
+    !ID!
+    # Optional arguments enclosed in parentheses.
+    (?:
+    \s* \( \s*
+      (
+        !APPLY_FIRST_ARGUMENT!
+        !APPLY_NEXT_ARGUMENT! *
+      ) \s*
+    \)
+    )?
+    \s* \]
+  </entry>
+
+  <!-- A comment, styled after the common symbols-star pattern -->
+  <!-- [* this is a comment *] -->
+  <entry key="COMMENT">
+    \[ \s*
+    \* .*? \*
+    \s* \]
+  </entry>
+
+
+  <!-- A comment, styled after the common symbols-star pattern -->
+  <!-- [* this is a comment *] -->
+  <entry key="VALUE_COMMENT">
+    \{ \s*
+    \* .*? \*
+    \s* \}
+  </entry>
+
+  <!-- An 'else' directive -->
+  <!-- [else] -->
+  <entry key="ELSE">
+    \[ \s*
+    else
+    \s* \]
+  </entry>
+
+  <!-- An 'end' directive -->
+  <!-- [else] -->
+  <entry key="END">
+    \[ \s*
+    end
+    \s* \]
+  </entry>
+
+  <!-- A "here" document. -->
+  <!-- {>> marker} this is a document {marker} -->
+  <entry key="VALUE_HERE"><![CDATA[
+    \{ \s*
+      !FLAGS!
+      >> \s*
+      !MARKER!
+    \s* \}
+
+    # The here document contents
+    (?<document> .*? )
+
+    # Here document terminal
+    \{ \s*
+      (?-i: \k<marker> )
+    \s* \}
+  ]]>
+  </entry>
+
+  <!-- An "if" directive. -->
+  <!-- [if flagIsTrue] [else] [end] -->
+  <entry key="IF">
+    \[ \s*
+    if \s+ !ID!
+    \s* \]
+  </entry>
+
+  <!-- Include another template. -->
+  <!-- [ Include my/template/which/does/stuff.txt ] -->
+  <entry key="INCLUDE">
+    \[ \s*
+    include \s+
+    # Path is any character except '{', '}', '[', ']', '&lt;', '&gt;', ':', ';', and '\'
+    ( [^ { } \[ \] &lt; &gt; : ; \\ ]+? )
+    \s* \]
+  </entry>
+
+  <!-- Loop over a collection or array -->
+  <!-- [ loop datum ] ... [else] ... [end] -->
+  <entry key="LOOP">
+    \[ \s*
+    loop \s+ !ID!
+    \s* \]
+  </entry>
+
+  <!-- Include a template from the default resource bundle. -->
+  <!-- [{ message }] -->
+  <entry key="RESOURCE_1">
+    \[ \s* \{ \s*
+    !ID!
+    \s* \} \s* \]
+  </entry>
+
+
+  <!-- Include a template from the specified resource bundle. -->
+  <!-- [{ bundle, message }] -->
+  <entry key="RESOURCE_2">
+    \[ \s* \{ \s*
+    # The resource bundle
+    !ID!
+    !SEPARATOR!
+    # The resource
+    !ID!
+    \s* \} \s* \]
+  </entry>
+
+  <!-- Set some properties -->
+  <!-- [set escape=no_escape, bundle = new_bundle] -->
+  <entry key="SET">
+    \[ \s*
+    set (?: \s+
+    (
+    !SETTING!
+    (?:
+    !SEPARATOR!
+    !SETTING!
+    )*
+    )
+    )?
+    \s* \]
+  </entry>
+
+  <!-- A use directive -->
+  <!-- [use datum] -->
+  <entry key="USE">
+    \[ \s*
+    use \s+ !ID!
+    \s* \]
+  </entry>
+
+  <!-- basic value -->
+  <!-- {value -->
+  <entry key="VALUE">
+    \{ \s*
+    !FLAGS!
+    !ID!
+    \s* \}
+  </entry>
+
+  <entry key="VALUE_DATE">
+    \{ \s*
+    !FLAGS!
+    !ID!
+    !SEPARATOR!
+    date
+    (?:
+    !SEPARATOR!
+    # Not a here document
+    (?!>>)
+    (.*?)
+    )?
+    \s* \}
+  </entry>
+
+  <entry key="VALUE_TIME">
+    \{ \s*
+    !FLAGS!
+    !ID!
+    !SEPARATOR!
+    time
+    (?:
+    !SEPARATOR!
+    # Not a here document
+    (?!>>)
+    (.*?)
+    )?
+    \s* \}
+  </entry>
+
+  <entry key="VALUE_DATE_TIME">
+    \{ \s*
+    !FLAGS!
+    !ID!
+    !SEPARATOR!
+    datetime
+    (?:
+    !SEPARATOR!
+    # Not a here document
+    (?!>>)
+    # Not a datetime with 2 arguments.
+    (?!
+    (?: !STYLE! )
+    !SEPARATOR!
+    (?: !STYLE! )
+    )
+    # The format specifier
+    (.*)
+    )?
+    \s* \}
+  </entry>
+
+  <entry key="VALUE_DATE_TIME_2">
+    \{ \s*
+    !FLAGS!
+    !ID!
+    !SEPARATOR!
+    datetime
+    !SEPARATOR!
+    ( !STYLE! )
+    !SEPARATOR!
+    ( !STYLE! )
+    \s* \}
+  </entry>
+
+  <entry key="VALUE_DATE_TIME_HERE"><![CDATA[
+    \{ \s*
+      !FLAGS!
+      !ID!
+      !SEPARATOR!
+      (?: date | time | datetime )
+      !SEPARATOR!
+      >> \s*
+      !MARKER!
+    \s* \}
+    (.*?)
+    \{ \s*
+      (?-i: \k<marker> )
+    \s* \}
+  ]]>
+  </entry>
+
+  <entry key="VALUE_FORMAT">
+    \{ \s*
+    !FLAGS!
+    !ID!
+    !SEPARATOR!
+    format
+    !SEPARATOR!
+    # Not a here document
+    (?!>>)
+    (.*?)
+    \s* \}
+  </entry>
+
+  <entry key="VALUE_FORMAT_HERE"><![CDATA[
+    \{ \s*
+      !FLAGS!
+      !ID!
+      !SEPARATOR!
+      format
+      !SEPARATOR!
+      >> \s*
+      !MARKER!
+    \s* \}
+    (.*?)
+    \{ \s*
+      (?-i: \k<marker> )
+    \s* \}
+  ]]>
+  </entry>
+
+  <entry key="VALUE_NUMBER">
+    \{ \s*
+    !FLAGS!
+    !ID!
+    !SEPARATOR!
+    number
+    # Optional format
+    (?:
+    !SEPARATOR!
+    # Not a here document
+    (?!>>)
+    (.*?)
+    )?
+    \s* \}
+  </entry>
+
+  <entry key="VALUE_NUMBER_HERE"><![CDATA[
+    \{ \s*
+      !FLAGS!
+      !ID!
+      !SEPARATOR!
+      number
+      !SEPARATOR!
+      >> \s*
+      !MARKER!
+    \s* \}
+    (.*?)
+    \{ \s*
+      (?-i: \k<marker> )
+    \s* \}
+  ]]>
+  </entry>
+
+</properties>

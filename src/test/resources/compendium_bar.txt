@@ -1,0 +1,21 @@
+/hello
+Hello, World!
+
+/bye
+Farwell! Adieu!
+
+// slash slash //
+
+
+/here/it/is >> EOT
+
+this is something
+
+which goes on for a bit
+
+/and/has/paths/in/it
+
+but that's OK
+
+provided we see EOT
+EOT

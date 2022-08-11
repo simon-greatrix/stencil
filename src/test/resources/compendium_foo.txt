@@ -1,0 +1,10 @@
+/hello
+What's occurring?
+
+/merge
+How about merging something in?
+
+/test/no/eot >> EOT
+
+This has no EOT value.
+Shame.
