@@ -29,7 +29,8 @@ if ((versionDetails().branchName ==~ /^(main)|(master)|(release.*)|(patch.*)$/) 
   print versionDetails()
   project.version = '100-SNAPSHOT'
 }
-project.version='1.0'
+
+
 
 repositories {
   if (version.endsWith("SNAPSHOT")) {
