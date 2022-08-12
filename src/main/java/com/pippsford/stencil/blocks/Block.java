@@ -20,12 +20,17 @@ public interface Block {
    */
   BlockTypes getType();
 
+
   /**
    * Process this block, producing the output.
    *
    * @param out    the output stream
    * @param locale the output locale
+   * @param zoneId the time zone for dates and times
    * @param data   this page's data
+   *
+   * @throws StencilException if the processing of the block fails
+   * @throws IOException      if the result of the block cannot be written
    */
   void process(Writer out, Locale locale, ZoneId zoneId, Data data) throws StencilException, IOException;
 

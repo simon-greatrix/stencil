@@ -31,9 +31,10 @@ public class DateTimeValue2 extends BaseValue {
   /**
    * Date value renderer.
    *
-   * @param param     parameter to render
-   * @param dateStyle the format selection for the date part
-   * @param timeStyle the format selection for the time part
+   * @param escapeStyle escaping style to use
+   * @param param       parameter to render
+   * @param dateStyle   the format selection for the date part
+   * @param timeStyle   the format selection for the time part
    */
   public DateTimeValue2(Escape escapeStyle, String param, String dateStyle, String timeStyle) {
     super(BlockTypes.VALUE_DATE_TIME_2, escapeStyle, param);

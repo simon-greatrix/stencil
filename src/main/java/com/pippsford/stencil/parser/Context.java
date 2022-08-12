@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.pippsford.stencil.Stencils;
 import com.pippsford.stencil.escape.Escape;
 import com.pippsford.stencil.source.StencilId;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Context for identifying supplementary resources.
@@ -33,6 +34,7 @@ public class Context {
    * @param stencils  the stencil set which will contain this
    * @param stencilId the id of the stencil
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public Context(Stencils stencils, StencilId stencilId) {
     Objects.requireNonNull(stencils);
     this.stencils = stencils;
@@ -75,6 +77,7 @@ public class Context {
   }
 
 
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public Stencils getStencils() {
     return stencils;
   }

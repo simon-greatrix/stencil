@@ -183,6 +183,9 @@ public class Stencils {
    * @param stencilName the stencil's name
    * @param writer      where to write the stencil to
    * @param params      the input to the stencil
+   *
+   * @throws IOException      if there is a read or write error
+   * @throws StencilException if there is a problem processing the stencils
    */
   public void write(String stencilName, Writer writer, Object params) throws IOException, StencilException {
     write(stencilName, writer, null, null, params);
@@ -197,6 +200,9 @@ public class Stencils {
    * @param locale      the localization (if null, uses system default)
    * @param zoneId      the time zone (if null, uses system default)
    * @param params      the input to the stencil
+   *
+   * @throws IOException      if the output of the stencil cannot be written
+   * @throws StencilException if the processing of a stencil fails
    */
   public void write(String stencilName, Writer writer, Locale locale, ZoneId zoneId, Object params) throws IOException, StencilException {
     if (locale == null) {
@@ -222,6 +228,8 @@ public class Stencils {
    * @param params      the input to the stencil
    *
    * @return the stencil
+   *
+   * @throws StencilException if there is a problem processing the stencil
    */
   public String write(String stencilName, Object params) throws StencilException {
     return write(stencilName, null, null, params);
@@ -233,8 +241,12 @@ public class Stencils {
    *
    * @param stencilName the stencil's name
    * @param params      the input to the stencil
+   * @param zoneId      the date and time zone
+   * @param locale      the locale
    *
    * @return the stencil
+   *
+   * @throws StencilException if the processing of the stencil fails
    */
   public String write(String stencilName, Locale locale, ZoneId zoneId, Object params) throws StencilException {
     StringWriter writer = new StringWriter();

@@ -8,6 +8,8 @@ import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * A data carrier with lazily initialized mutability. Data structures are hierarchical with levels being separated by '.'s in the parameter name.
  *
@@ -85,6 +87,7 @@ public class Data {
    *
    * @param provider the value provider which backs this instance
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public Data(ValueProvider provider) {
     this.provider = provider;
     if (provider instanceof MutableValueProvider) {
@@ -224,6 +227,8 @@ public class Data {
 
   /**
    * Convert this instance to JSON. Requires a JSON provider on the classpath.
+   *
+   * @param converter bean to JSON converter.
    *
    * @return this Data instance as JSON.
    */

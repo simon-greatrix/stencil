@@ -49,8 +49,9 @@ public class Apply implements Block {
   /**
    * New instance.
    *
-   * @param function  the ID of the function to apply
-   * @param arguments the arguments to the function as comma separated list of IDs.
+   * @param function     the ID of the function to apply
+   * @param outParameter an optional parameter to store results in
+   * @param arguments    the arguments to the function as comma separated list of IDs.
    */
   public Apply(String function, String outParameter, String arguments) {
     functionName = ValueAccessor.toKey(function);

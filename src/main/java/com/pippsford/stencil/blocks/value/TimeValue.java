@@ -13,8 +13,9 @@ public class TimeValue extends BaseDateTimeValue {
   /**
    * Time value renderer.
    *
-   * @param param     parameter to render
-   * @param timeStyle the format selection
+   * @param escapeStyle escaping style to use
+   * @param param       parameter to render
+   * @param timeStyle   the format selection
    */
   public TimeValue(Escape escapeStyle, String param, String timeStyle) {
     super(BlockTypes.VALUE_TIME, escapeStyle, param, timeStyle, DateTimeFormatter::ofLocalizedTime);

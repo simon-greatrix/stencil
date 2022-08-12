@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 
 import com.pippsford.stencil.Source;
 import com.pippsford.stencil.SourceProvider;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * A provider of source that provides stencils from a compendium.
@@ -43,7 +44,7 @@ import com.pippsford.stencil.SourceProvider;
  *
  *   It carries on until a line starts with a '/'.
  *
- *   /this/is/another/stencil >> END-OF
+ *   /this/is/another/stencil &gt;&gt; END-OF
  *
  *   This is a second stencil, using a "here document".
  *
@@ -222,6 +223,7 @@ public class CompendiumSourceProvider implements SourceProvider {
   }
 
 
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public void setClassLoader(ClassLoader classLoader) {
     this.classLoader = classLoader;
   }

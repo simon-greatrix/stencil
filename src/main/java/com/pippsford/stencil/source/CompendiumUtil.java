@@ -188,6 +188,8 @@ public class CompendiumUtil {
    * @param path the file's path
    *
    * @return the data in the compendium
+   *
+   * @throws StencilStorageException if the compendium cannot be read
    */
   public static SortedMap<String, String> readCompendium(Path path) throws StencilStorageException {
     URI uri = path.toUri();

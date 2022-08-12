@@ -62,6 +62,7 @@ public class ValueAccessor {
   /**
    * Create a value provider for accessing a particular object.
    *
+   * @param parent parent provider for inheritance
    * @param source the object
    *
    * @return the value provider

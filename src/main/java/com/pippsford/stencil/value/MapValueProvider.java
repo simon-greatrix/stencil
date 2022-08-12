@@ -8,6 +8,8 @@ import java.util.function.BiConsumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * A value provider backed by a map.
  *
@@ -23,8 +25,10 @@ public class MapValueProvider implements ValueProvider {
   /**
    * New instance. The passed in map provides the values and is treated as immutable.
    *
-   * @param map the map.
+   * @param parent parent value provider for inheritance
+   * @param map    the map.
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public MapValueProvider(ValueProvider parent, Map<?, ?> map) {
     this.parent = parent;
     this.map = map;

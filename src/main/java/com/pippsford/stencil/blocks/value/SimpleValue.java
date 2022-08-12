@@ -15,7 +15,8 @@ public class SimpleValue extends BaseValue {
   /**
    * New value renderer.
    *
-   * @param param parameter to render in DataElementHelper format
+   * @param escapeStyle escaping style to use
+   * @param param       parameter to render in DataElementHelper format
    */
   public SimpleValue(Escape escapeStyle, String param) {
     super(BlockTypes.VALUE, escapeStyle, param);

@@ -24,9 +24,10 @@ public class ListEntryValueProvider implements ValueProvider {
   /**
    * New instance.
    *
-   * @param index the index of this entry in the list
-   * @param size  the number of entries in the list
-   * @param value the value at this point in the list
+   * @param parent parent value for inheritance
+   * @param index  the index of this entry in the list
+   * @param size   the number of entries in the list
+   * @param value  the value at this point in the list
    */
   public ListEntryValueProvider(ValueProvider parent, int index, int size, Object value) {
     this.parent = parent;

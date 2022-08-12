@@ -20,11 +20,11 @@ import javax.annotation.Nullable;
  */
 public class IndexedValueProvider implements MutableValueProvider {
 
-  private static final Pattern INDEX = Pattern.compile("[1-9][0-9]*");
-
   static final String P_IS_EMPTY = "isEmpty";
 
   static final String P_SIZE = "size";
+
+  private static final Pattern INDEX = Pattern.compile("[1-9][0-9]*");
 
   private final IntFunction<Object> getter;
 
@@ -128,6 +128,8 @@ public class IndexedValueProvider implements MutableValueProvider {
   /**
    * Test if this provider is providing from a list and only a list. If values have been put into this provider that neither over-write nor extend the
    * under-lying list, then this is not a pure list.
+   *
+   * @return true if this is a list and only a list
    */
   public boolean isPureList() {
     if (otherValues.isEmpty()) {

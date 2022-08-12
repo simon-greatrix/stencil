@@ -7,9 +7,6 @@ import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.pippsford.stencil.SourceProvider;
 import com.pippsford.stencil.Stencils;
 import com.pippsford.stencil.blocks.Apply;
@@ -36,6 +33,8 @@ import com.pippsford.stencil.source.SourceStencilId;
 import com.pippsford.stencil.source.StencilId;
 import com.pippsford.stencil.source.StencilNotFoundException;
 import com.pippsford.stencil.source.StencilStorageException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Parser for stencil templates.
@@ -57,6 +56,10 @@ public class TemplateParser {
    * @param stencilId the ID of the stencil
    *
    * @return the template created
+   *
+   * @throws StencilParseFailedException if the stencil is invalid
+   * @throws StencilNotFoundException    if the stencil cannot be located
+   * @throws StencilStorageException     if the stencil cannot be read
    */
   public static Template parse(Stencils stencils, StencilId stencilId)
       throws StencilParseFailedException, StencilNotFoundException, StencilStorageException {

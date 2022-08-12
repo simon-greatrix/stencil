@@ -8,8 +8,11 @@ buildscript {
 }
 
 plugins {
-  id "com.github.spotbugs" version "4.6.0"
+  id "com.github.spotbugs" version "4.7.10"
   id 'com.palantir.git-version' version '0.12.3'
+  id 'signing'
+  id 'java'
+  id 'maven-publish'
 }
 
 apply plugin: 'java'
@@ -17,15 +20,16 @@ apply plugin: 'java'
 apply plugin: 'maven-publish'
 apply plugin: 'com.github.spotbugs'
 apply plugin: 'checkstyle'
+apply plugin: 'maven'
 
-
-group 'io.setl'
-if ( (versionDetails().branchName ==~ /^(master)|(release.*)|(patch.*)$/) && versionDetails().isCleanTag ) {
+group 'com.pippsford'
+if ((versionDetails().branchName ==~ /^(main)|(master)|(release.*)|(patch.*)$/) && versionDetails().isCleanTag && gitVersion() ==~ /^\d+(\.\d+)+(-.+)?$/) {
   project.version = gitVersion()
 } else {
   print versionDetails()
   project.version = '100-SNAPSHOT'
 }
+project.version='1.0'
 
 repositories {
   if (version.endsWith("SNAPSHOT")) {
@@ -68,6 +72,26 @@ spotbugsMain {
    }       
  }
 }
+spotbugsTest {
+  enabled = false
+}
+
+
+java {
+  withSourcesJar()
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+}
+
+javadoc {
+  source = sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar) {
+  classifier = 'javadoc'
+  from javadoc
+}
+
 
 test {
   useJUnitPlatform()
@@ -81,25 +105,59 @@ task sourceJar(type: Jar) {
   from sourceSets.main.allJava
 }
 
-publishing {
-  publications {
-    mavenJava(MavenPublication) {
-      from components.java
-      artifact sourceJar {
-        classifier "sources"
-      }
-    }
-  }
+artifacts {
+  archives javadocJar, sourcesJar
+}
+
+signing {
+  useGpgCmd()
+  sign configurations.archives
+}
+
+
+
+
+// Upload to Maven Central
+uploadArchives {
   repositories {
-    maven {
-      credentials {
-        username = project.hasProperty('mavenUser') ? "$mavenUser" : ''
-        password = project.hasProperty('mavenPassword') ? "$mavenPassword" : ''
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsernamePippsford, password: ossrhPasswordPippsford)
       }
-      if (version.endsWith("SNAPSHOT")) {
-        url 'http://si-nexus01.dev.setl.io:8081/repository/setl-snaps'
-      } else {
-        url 'http://si-nexus01.dev.setl.io:8081/repository/setl-libs'
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsernamePippsford, password: ossrhPasswordPippsford)
+      }
+
+      pom.project {
+        name 'Stencil Templating System'
+        packaging 'jar'
+        // optionally artifactId can be defined here
+        description 'Stencil templating system'
+        url 'https://github.com/simon-greatrix/stencil'
+
+        scm {
+          connection 'scm:git:https://github.com/simon-greatrix/stencil'
+          developerConnection 'scm:git:https://github.com/simon-greatrix/stencil'
+          url 'https://github.com/simon-greatrix/stencil'
+        }
+
+        licenses {
+          license {
+            name 'The Apache License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id 'simon-greatrix'
+            name 'Simon Greatrix'
+            email 'simon@pippsford.com'
+          }
+        }
       }
     }
   }

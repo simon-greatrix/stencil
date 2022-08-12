@@ -24,7 +24,8 @@ public class Static implements Block {
   /**
    * New static block of text.
    *
-   * @param text the text
+   * @param text       the text
+   * @param isRequired if true, the text must be specified
    */
   public Static(String text, boolean isRequired) {
     this.text = text;

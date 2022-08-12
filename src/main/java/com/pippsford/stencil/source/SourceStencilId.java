@@ -31,6 +31,8 @@ public class SourceStencilId extends StencilId {
    * @param locale      the processing locale
    * @param bundle      the message bundle
    * @param escape      the escape mechanism
+   *
+   * @throws StencilNotFoundException if the stencil cannot be located
    */
   public SourceStencilId(SourceProvider provider, String stencilName, Locale locale, String bundle, Escape escape) throws StencilNotFoundException {
     super(locale, bundle, escape);

@@ -35,6 +35,8 @@ public abstract class IndividualSourceProvider implements SourceProvider {
    * @param path the path, including a locale specifier
    *
    * @return the source text, or null
+   *
+   * @throws StencilStorageException if the stencil cannot be read
    */
   @Nullable
   protected abstract String handleGet(String path) throws StencilStorageException;

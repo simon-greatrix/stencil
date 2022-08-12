@@ -1,6 +1,7 @@
 package com.pippsford.stencil.apply;
 
 import com.pippsford.stencil.value.Data;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * A value processor function that draws from a Data instance.
@@ -12,6 +13,7 @@ public class ParameterDatum extends Parameter {
   private final Data myData;
 
 
+  @SuppressFBWarnings("EI_EXPOSE_REP")
   public ParameterDatum(Data data, String rawValue) {
     super(rawValue);
     myData = data;
