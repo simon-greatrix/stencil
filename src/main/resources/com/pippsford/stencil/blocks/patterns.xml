@@ -83,10 +83,10 @@
     # Optional arguments enclosed in parentheses.
     (?:
     \s* \( \s*
-      (
-        !APPLY_FIRST_ARGUMENT!
-        !APPLY_NEXT_ARGUMENT! *
-      ) \s*
+    (
+    !APPLY_FIRST_ARGUMENT!
+    !APPLY_NEXT_ARGUMENT! *
+    ) \s*
     \)
     )?
     \s* \]

@@ -21,7 +21,7 @@ public class IndexableInt implements Indexable<Integer> {
    *
    * @param start the first int returned (inclusive)
    * @param end   the last int returned (exclusive)
-   * @param step  the step size (may be negative, but not zero)
+   * @param step  the step size (can be negative, but not zero)
    */
   public IndexableInt(int start, int end, int step) {
     this.start = start;

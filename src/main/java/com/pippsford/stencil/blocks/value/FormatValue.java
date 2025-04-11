@@ -8,7 +8,7 @@ import com.pippsford.stencil.escape.Escape;
 import com.pippsford.stencil.value.Data;
 
 /**
- * A value formatter using the String.format style.
+ * A value formatter using the {@code String.format} style.
  *
  * @author Simon Greatrix on 28/12/2020.
  */

@@ -91,7 +91,7 @@ public class HTML {
     // entity to represent them, but can insert them directly.
     //
     // I also want to prevent the use of CR to trigger a carriage return when the output is viewed as source. A carriage return can lead to some data being
-    // hidden. Therefore I canonicalize all new-line indicators ( CR, LF, CRLF ) to LF.
+    // hidden. Therefore, I canonicalize all new-line indicators ( CR, LF, CRLF ) to LF.
 
     // Fast check.
     final int length = builder.length();

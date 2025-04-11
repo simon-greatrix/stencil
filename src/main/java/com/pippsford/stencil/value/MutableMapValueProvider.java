@@ -47,8 +47,8 @@ public class MutableMapValueProvider implements MutableValueProvider {
   @Override
   public void visit(BiConsumer<String, Object> visitor) {
     map.forEach((k, v) -> {
-      if (k instanceof String) {
-        visitor.accept((String) k, v);
+      if (k != null) {
+        visitor.accept(k, v);
       }
     });
   }

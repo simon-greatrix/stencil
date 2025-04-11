@@ -40,7 +40,7 @@ public abstract class Parameter implements Comparable<Parameter> {
 
 
   /**
-   * Compare to another parameter. Nulls sort last. If both are numeric, compare numerically. Otherwise sort in default String order.
+   * Compare to another parameter. Nulls sort last. If both are numeric, compare numerically. Otherwise, sort in default String order.
    */
   @Override
   public int compareTo(@Nonnull Parameter other) {

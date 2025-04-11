@@ -1,7 +1,7 @@
 package com.pippsford.stencil.escape;
 
 /**
- * ECMA Script (ES6+) style escaping. This includes escaping the back-quote and representing non-BMP unicode as \ u{12345}.
+ * ECMA Script (ES6+) style escaping. This includes escaping the back-quote and representing non-BMP Unicode as \ u{12345}.
  *
  * @author Simon Greatrix on 11/01/2021.
  */

@@ -73,7 +73,7 @@ public enum BlockTypes {
   VALUE,
 
   /**
-   * A comment that counts as a value for processing whitespace..
+   * A comment that counts as a value for processing whitespace.
    */
   VALUE_COMMENT,
 

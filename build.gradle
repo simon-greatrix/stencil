@@ -1,26 +1,14 @@
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7"
-  }
-}
-
 plugins {
-  id "com.github.spotbugs" version "4.7.10"
-  id 'com.palantir.git-version' version '0.12.3'
-  id 'signing'
+  id "com.github.spotbugs" version "5.2.3"
+  id 'com.palantir.git-version' version '3.1.0'
+
   id 'java'
+  id 'java-library'
   id 'maven-publish'
+  id 'checkstyle'
+  id 'signing'
+  id 'org.owasp.dependencycheck' version '8.4.2'
 }
-
-apply plugin: 'java'
-
-apply plugin: 'maven-publish'
-apply plugin: 'com.github.spotbugs'
-apply plugin: 'checkstyle'
-apply plugin: 'maven'
 
 group 'com.pippsford'
 if ((versionDetails().branchName ==~ /^(main)|(master)|(release.*)|(patch.*)$/) && versionDetails().isCleanTag && gitVersion() ==~ /^\d+(\.\d+)+(-.+)?$/) {
@@ -30,12 +18,7 @@ if ((versionDetails().branchName ==~ /^(main)|(master)|(release.*)|(patch.*)$/) 
   project.version = '100-SNAPSHOT'
 }
 
-
-
 repositories {
-  if (version.endsWith("SNAPSHOT")) {
-    mavenLocal()
-  }
   mavenCentral()
 }
 
@@ -67,99 +50,94 @@ spotbugs {
   effort = 'max'
 }
 spotbugsMain {
- reports {
-   html {
-     enabled = true
-   }       
- }
+  reports {
+    html {
+      enabled = true
+    }
+  }
 }
 spotbugsTest {
   enabled = false
 }
 
-
 java {
   withSourcesJar()
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
-}
-
-javadoc {
-  source = sourceSets.main.allJava
-}
-
-task javadocJar(type: Jar) {
-  classifier = 'javadoc'
-  from javadoc
-}
-
-
-test {
-  useJUnitPlatform()
-  reports {
-    junitXml.enabled = true
-    html.enabled = true
+  withJavadocJar()
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(11)
   }
 }
 
-task sourceJar(type: Jar) {
-  from sourceSets.main.allJava
+javadoc {
+  options.addStringOption('Xmaxwarns', '65536')
+}
+
+test {
+  useJUnitPlatform()
 }
 
 artifacts {
   archives javadocJar, sourcesJar
 }
 
-signing {
-  useGpgCmd()
-  sign configurations.archives
-}
-
-
-
-
-// Upload to Maven Central
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: ossrhUsernamePippsford, password: ossrhPasswordPippsford)
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: ossrhUsernamePippsford, password: ossrhPasswordPippsford)
-      }
-
-      pom.project {
-        name 'Stencil Templating System'
-        packaging 'jar'
-        // optionally artifactId can be defined here
-        description 'Stencil templating system'
-        url 'https://github.com/simon-greatrix/stencil'
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+      pom {
+        name = 'Stencil Templating System'
+        packaging = 'jar'
+        description = 'Stencil templating system'
+        url = 'https://github.com/simon-greatrix/stencil'
 
         scm {
-          connection 'scm:git:https://github.com/simon-greatrix/stencil'
-          developerConnection 'scm:git:https://github.com/simon-greatrix/stencil'
-          url 'https://github.com/simon-greatrix/stencil'
+          connection = 'scm:git:https://github.com/simon-greatrix/stencil'
+          developerConnection = 'scm:git:https://github.com/simon-greatrix/stencil'
+          url = 'https://github.com/simon-greatrix/stencil'
         }
 
         licenses {
           license {
-            name 'The Apache License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            name = 'The Apache License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
           }
         }
 
         developers {
           developer {
-            id 'simon-greatrix'
-            name 'Simon Greatrix'
-            email 'simon@pippsford.com'
+            id = 'simon-greatrix'
+            name = 'Simon Greatrix'
+            email = 'simon@pippsford.com'
           }
         }
       }
     }
   }
+
+  repositories {
+    maven {
+      name = 'file'
+      url = layout.buildDirectory.dir('repository')
+    }
+  }
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = 'UTF-8'
+}
+
+tasks.withType(Javadoc).configureEach {
+  options.encoding = 'UTF-8'
+}
+
+signing {
+  useGpgCmd()
+  sign publishing.publications.mavenJava
+}
+
+tasks.register("createCentralZip", Zip) {
+  dependsOn tasks.named("publishMavenJavaPublicationToFileRepository")
+  from layout.buildDirectory.dir("repository")
+  destinationDirectory = layout.buildDirectory.dir("publications")
+  archiveFileName = "central.zip"
 }

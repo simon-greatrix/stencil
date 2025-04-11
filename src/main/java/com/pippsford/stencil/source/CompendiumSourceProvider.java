@@ -34,7 +34,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * <ol>
  *   <li>Starts with a '/'.</li>
  *   <li>Does not end with a '/', unless it is just "/".</li>
- *   <li>Cannot contains these characters: '{', '}', '&lt;', '&gt;', '[', ']', ':', ';', '\'</li>
+ *   <li>Cannot contain these characters: '{', '}', '&lt;', '&gt;', '[', ']', ':', ';', '\'</li>
  * </ol>
  *
  * <pre>

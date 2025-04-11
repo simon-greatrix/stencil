@@ -48,7 +48,7 @@ public class ValueAccessor {
    *
    * @param provider the provider
    *
-   * @return a mutable wrapper on the provider, or the provider itself it it was mutable
+   * @return a mutable wrapper on the provider, or the provider itself if it was mutable
    */
   public static MutableValueProvider makeMutable(ValueProvider provider) {
     Objects.requireNonNull(provider);

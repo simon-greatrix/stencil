@@ -217,8 +217,10 @@ public class TemplateParser {
       blocks.add(blockCreator.apply(main, other));
     } catch (StencilParseFailedException e) {
       Location location = fixMatch.getLocation();
-      throw new StencilParseFailedException("Parse problem in block " + fixMatch.type + " at " + location.getRow() + ":" + location.getColumn() + " in "
-          + context.getStencilId().getLogId(), e);
+      throw new StencilParseFailedException(
+          "Parse problem in block " + fixMatch.type + " at " + location.getRow() + ":" + location.getColumn() + " in "
+              + context.getStencilId().getLogId(), e
+      );
     }
   }
 

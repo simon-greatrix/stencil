@@ -165,7 +165,7 @@ public class CompendiumUtil {
   private static String markerFor(String value) {
     String[] lines = value.split("\n");
 
-    // if has trailing whitespace, needs marker
+    // if value has trailing whitespace, needs marker
     int length = value.length();
     if (length > 1 && Character.isWhitespace(value.charAt(length - 2))) {
       return createMarker(lines);

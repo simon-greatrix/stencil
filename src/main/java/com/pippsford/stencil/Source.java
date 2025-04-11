@@ -39,7 +39,7 @@ public class Source {
       }
 
       // skip "." and empty parts
-      if (!(s.equals("") || s.equals("."))) {
+      if (!(s.isEmpty() || s.equals("."))) {
         list.add(s);
       }
     }

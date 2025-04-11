@@ -3,7 +3,7 @@ package com.pippsford.stencil.parser;
 import com.pippsford.stencil.StencilException;
 
 /**
- * Exception thrown when a the parse of a stencil fails.
+ * Exception thrown when the parse of a stencil fails.
  *
  * @author Simon Greatrix on 22/12/2020.
  */

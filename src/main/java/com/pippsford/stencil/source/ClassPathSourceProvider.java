@@ -11,9 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import javax.annotation.Nullable;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import com.pippsford.stencil.Source;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 
 /**

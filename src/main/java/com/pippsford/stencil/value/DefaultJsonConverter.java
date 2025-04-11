@@ -23,11 +23,11 @@ public class DefaultJsonConverter implements JsonConverter {
 
   protected final JsonProvider provider;
 
+  private final IdentityHashSet processed = new IdentityHashSet();
+
   private int depth;
 
   private int maxDepth = 10;
-
-  private IdentityHashSet processed = new IdentityHashSet();
 
 
   public DefaultJsonConverter(JsonProvider provider) {
@@ -68,13 +68,13 @@ public class DefaultJsonConverter implements JsonConverter {
     }
 
     if (!processed.add(object)) {
-      return provider.createValue("\uaa5c");
+      return provider.createValue("꩜");
     }
 
     depth++;
     try {
       if (depth >= maxDepth) {
-        return provider.createValue("\u22ef");
+        return provider.createValue("⋯");
       }
 
       ValueProvider provider = ValueAccessor.makeProvider(ValueProvider.NULL_VALUE_PROVIDER, object);

@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
  *
  * @author Simon Greatrix on 03/01/2021.
  */
-interface MutableValueProvider extends ValueProvider {
+public interface MutableValueProvider extends ValueProvider {
 
   /**
    * Set a new value into this provider which will then be retrievable by the get method. Note that this does not normally change the original data passed

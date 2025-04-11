@@ -1,7 +1,5 @@
 package com.pippsford.stencil.value;
 
-import java.util.IdentityHashMap;
-import java.util.Set;
 import javax.json.JsonValue;
 
 /**
