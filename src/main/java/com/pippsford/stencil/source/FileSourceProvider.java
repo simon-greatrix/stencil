@@ -31,7 +31,7 @@ public class FileSourceProvider extends IndividualSourceProvider {
   @Nullable
   @Override
   protected String handleGet(String path) throws StencilStorageException {
-    Path file = rootPath.resolve(path.substring(1));
+    Path file = rootPath.resolve(path.substring(1)).normalize();
     if (Files.isReadable(file) && Files.isRegularFile(file)) {
       try {
         return Files.readString(file);
@@ -40,7 +40,7 @@ public class FileSourceProvider extends IndividualSourceProvider {
       }
     }
 
-    // file does not exist, or is not readable
+    // file does not exist or is not readable
     return null;
   }
 

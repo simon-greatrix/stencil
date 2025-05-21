@@ -8,7 +8,7 @@ import com.pippsford.stencil.Source;
 import com.pippsford.stencil.SourceProvider;
 
 /**
- * A source provider that adds header and footer text to existing source.
+ * A source provider that adds header and footer text to an existing source.
  *
  * @author Simon Greatrix on 13/02/2021.
  */

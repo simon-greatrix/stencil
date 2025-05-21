@@ -688,17 +688,17 @@ Escape styles are case insensitive. The hyphen may be removed, or replaced with 
 The difference between ECMA, Java and JSON encoding is subtle, and shown in the following table:
 
 | **Character** | **ECMA** | **Java** | **JSON** |
-| --- | --- | --- | --- |
-| Backspace (0x8) | \b | \b | \b |
-| Tab (0x9) | \t | \t | \t |
-| Line feed (0xA) | \n | \n | \n |
-| Vertical tab (0xB) | \v |  |  |
-| Form Feed (0xC) | \f | \f | \f |
-| Carriage Return (0xD) | \r | \r | \r |
-| Double Quote (0x22) | \" | \" | \" |
-| Single Quote (0x27) | \' | \' |  |
-| Reverse Solidus (Back-slash) (0x5C) | \\ | \\ | \\ |
-| Back-tick (0x60) | \` |  |  |
+| --- |----------|----------|----------|
+| Backspace (0x8) | \b       | \b       | \b       |
+| Tab (0x9) | \t       | \t       | \t       |
+| Line feed (0xA) | \n       | \n       | \n       |
+| Vertical tab (0xB) | \v       |          |          |
+| Form Feed (0xC) | \f       | \f       | \f       |
+| Carriage Return (0xD) | \r       | \r       | \r       |
+| Double Quote (0x22) | \\"      | \\"      | \\"      |
+| Single Quote (0x27) | \\'      | \\'      |          |
+| Reverse Solidus (Back-slash) (0x5C) | \\       | \\       | \\       |
+| Back-tick (0x60) | \\`      |          |          |
 
 In ASCII mode, non-ASCII characters are replaced with numeric escapes.
 

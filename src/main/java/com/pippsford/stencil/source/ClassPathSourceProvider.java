@@ -45,7 +45,8 @@ public class ClassPathSourceProvider extends IndividualSourceProvider {
     }
     this.classLoader = classLoader;
     try {
-      this.root = Source.of(root + "/.ignored").getPath().substring(1);
+      // root always starts with a '/' and does not end with one, so this strips off the '/'
+      this.root = Source.cleanPath(root).substring(1);
     } catch (StencilNotFoundException e) {
       throw new IllegalArgumentException("Root path could not be parsed", e);
     }

@@ -12,7 +12,7 @@ import com.pippsford.stencil.source.StencilNotFoundException;
 public class Source {
 
   /**
-   * Split off a file suffix and clean up the path to create a source reference. A clean path does not start with a '/', and contains no elements like "//",
+   * Split off a file suffix and clean up the path to create a source reference. A clean path always starts with a '/' and contains no elements like "//",
    * "/./", nor "/../".
    *
    * @param path the path
@@ -21,12 +21,11 @@ public class Source {
    *
    * @throws StencilNotFoundException if the path indicates an empty or illegal file name.
    */
-  public static Source of(String path) throws StencilNotFoundException {
+  public static String cleanPath(String path) throws StencilNotFoundException {
     if (path == null || path.isEmpty()) {
       throw new StencilNotFoundException("A path must be specified");
     }
 
-    // remove ".", ".." and "" elements from the path
     String[] parts = path.split("/");
     LinkedList<String> list = new LinkedList<>();
     for (String s : parts) {
@@ -48,7 +47,29 @@ public class Source {
       throw new StencilNotFoundException("A path must not resolve to an empty path");
     }
 
-    String fileName = list.removeLast();
+    StringBuilder buf = new StringBuilder(path.length());
+    for (String s : list) {
+      buf.append('/').append(s);
+    }
+    return buf.toString();
+  }
+
+
+  /**
+   * Split off a file suffix and clean up the path to create a source reference. A clean path always starts with a '/', and contains no elements like "//",
+   * "/./", nor "/../".
+   *
+   * @param path the path
+   *
+   * @return the source reference
+   *
+   * @throws StencilNotFoundException if the path indicates an empty or illegal file name.
+   */
+  public static Source of(String path) throws StencilNotFoundException {
+    String clean = cleanPath(path);
+
+    int lastSlash = clean.lastIndexOf('/');
+    String fileName = clean.substring(lastSlash + 1);
     int lastDot = fileName.lastIndexOf('.');
     String suffix;
     if (lastDot == -1) {
@@ -56,16 +77,10 @@ public class Source {
       suffix = "";
     } else {
       suffix = fileName.substring(lastDot);
-      fileName = fileName.substring(0, lastDot);
-    }
-    list.addLast(fileName);
-
-    StringBuilder buf = new StringBuilder(path.length());
-    for (String s : list) {
-      buf.append('/').append(s);
+      clean = clean.substring(0, clean.length() - suffix.length());
     }
 
-    return new Source(buf.toString(), suffix);
+    return new Source(clean, suffix);
   }
 
 
