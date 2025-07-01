@@ -26,7 +26,7 @@ dependencies {
   implementation group: 'javax.json', name: 'javax.json-api', version: '1.1.4'
   implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
   implementation group: 'com.pippsford', name: 'common-utils', version: '1.15'
-  implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20200713.1'
+  implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20240325.1'
   implementation group: 'com.github.spotbugs', name: 'spotbugs-annotations', version: '4.2.0'
 
   testImplementation group: 'io.setl', name: 'canonical-json', version: '2.1'

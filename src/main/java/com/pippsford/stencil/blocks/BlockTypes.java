@@ -10,7 +10,7 @@ import java.util.regex.PatternSyntaxException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Possible block types within page.
+ * Possible block types within a page.
  */
 public enum BlockTypes {
 
