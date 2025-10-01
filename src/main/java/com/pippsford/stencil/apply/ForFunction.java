@@ -10,6 +10,7 @@ import com.pippsford.stencil.value.IndexableInt;
  */
 public class ForFunction implements ValueProcessor {
 
+  /** Singleton instance. */
   public static final ForFunction INSTANCE = new ForFunction();
 
 

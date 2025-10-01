@@ -20,6 +20,13 @@ public abstract class StencilId {
   private final Locale locale;
 
 
+  /**
+   * New instance.
+   *
+   * @param locale the locale
+   * @param bundle the name of the resource bundle
+   * @param escape the escape style
+   */
   protected StencilId(Locale locale, String bundle, Escape escape) {
     Objects.requireNonNull(locale);
     Objects.requireNonNull(escape);

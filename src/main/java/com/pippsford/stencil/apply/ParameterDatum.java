@@ -13,6 +13,12 @@ public class ParameterDatum extends Parameter {
   private final Data myData;
 
 
+  /**
+   * New instance.
+   *
+   * @param data     the data to get the value from
+   * @param rawValue the raw value (which is the path to the value)
+   */
   @SuppressFBWarnings("EI_EXPOSE_REP")
   public ParameterDatum(Data data, String rawValue) {
     super(rawValue);

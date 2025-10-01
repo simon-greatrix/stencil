@@ -9,6 +9,11 @@ import com.pippsford.stencil.value.Data;
  */
 public class ParameterLiteral extends Parameter {
 
+  /**
+   * New instance.
+   *
+   * @param value the literal value
+   */
   public ParameterLiteral(String value) {
     super(value);
   }

@@ -12,6 +12,7 @@ import com.pippsford.stencil.value.Data;
  */
 public class StackTraceFunction implements ValueProcessor {
 
+  /** The singleton instance of this function. */
   public static final StackTraceFunction INSTANCE = new StackTraceFunction();
 
 

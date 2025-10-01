@@ -56,21 +56,37 @@ public class IndexableInt implements Indexable<Integer> {
   }
 
 
+  /**
+   * Get the end value.
+   *
+   * @return the end value
+   */
   public int getEnd() {
     return end;
   }
 
 
+  /**
+   * Get the starting value.
+   *
+   * @return the starting value
+   */
   public int getStart() {
     return start;
   }
 
 
+  /**
+   * Get the step size.
+   *
+   * @return the step size
+   */
   public int getStep() {
     return step;
   }
 
 
+  @Override
   public int size() {
     return size;
   }

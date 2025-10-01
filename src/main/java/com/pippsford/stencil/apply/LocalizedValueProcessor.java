@@ -13,6 +13,16 @@ import com.pippsford.stencil.value.Data;
 @FunctionalInterface
 public interface LocalizedValueProcessor {
 
+  /**
+   * Apply the process.
+   *
+   * @param data      the data to process
+   * @param locale    the locale
+   * @param zoneId    the time zone
+   * @param arguments the arguments into the process
+   *
+   * @return the result of the process
+   */
   Object apply(Data data, Locale locale, ZoneId zoneId, Parameter[] arguments);
 
 }

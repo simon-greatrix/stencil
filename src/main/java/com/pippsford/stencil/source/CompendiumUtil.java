@@ -232,6 +232,14 @@ public class CompendiumUtil {
   }
 
 
+  /**
+   * Write out data in a compendium format.
+   *
+   * @param writer the writer to write to
+   * @param dataIn the compendium data
+   *
+   * @throws IOException if writing fails
+   */
   public static void writeCompendium(Writer writer, Map<String, String> dataIn) throws IOException {
     TreeMap<String, String> data = checkData(dataIn);
     writeCompendiumInternal(writer, data);

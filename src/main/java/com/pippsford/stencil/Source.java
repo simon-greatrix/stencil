@@ -95,11 +95,21 @@ public class Source {
   }
 
 
+  /**
+   * Get the path for this source.
+   *
+   * @return the path
+   */
   public String getPath() {
     return path;
   }
 
 
+  /**
+   * Get the suffix for this source.
+   *
+   * @return the suffix
+   */
   public String getSuffix() {
     return suffix;
   }

@@ -6,13 +6,14 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
-import javax.json.spi.JsonProvider;
+
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
+import jakarta.json.spi.JsonProvider;
 
 /**
  * Standard JSON converter that does simplistic expansion of beans.
@@ -21,6 +22,7 @@ import javax.json.spi.JsonProvider;
  */
 public class DefaultJsonConverter implements JsonConverter {
 
+  /** The JSON provider used to create JSON values. */
   protected final JsonProvider provider;
 
   private final IdentityHashSet processed = new IdentityHashSet();
@@ -30,16 +32,29 @@ public class DefaultJsonConverter implements JsonConverter {
   private int maxDepth = 10;
 
 
+  /**
+   * New instance using the specified JSON provider.
+   *
+   * @param provider the provider to use (null means default)
+   */
   public DefaultJsonConverter(JsonProvider provider) {
     this.provider = (provider != null) ? provider : JsonProvider.provider();
   }
 
 
+  /** New instance using the default JSON provider. */
   public DefaultJsonConverter() {
     this(null);
   }
 
 
+  /**
+   * Convert any object to a JSON object.
+   *
+   * @param object the object to convert
+   *
+   * @return the JsonValue that corresponds to the object
+   */
   protected JsonValue convertAny(Object object) {
     if (object == null) {
       return JsonValue.NULL;
@@ -92,11 +107,21 @@ public class DefaultJsonConverter implements JsonConverter {
   }
 
 
+  /**
+   * Get the maximum processing depth.
+   *
+   * @return the maximum depth
+   */
   public int getMaxDepth() {
     return maxDepth;
   }
 
 
+  /**
+   * Get the JSON provider.
+   *
+   * @return the provider
+   */
   public JsonProvider getProvider() {
     return provider;
   }
@@ -123,11 +148,23 @@ public class DefaultJsonConverter implements JsonConverter {
   }
 
 
+  /**
+   * The maximum number of levels to expand the object.
+   *
+   * @param maxDepth the new maximum depth
+   */
   public void setMaxDepth(int maxDepth) {
     this.maxDepth = maxDepth;
   }
 
 
+  /**
+   * Convert an indexed value to a JSON array.
+   *
+   * @param values the collection of values
+   *
+   * @return the JSON representation
+   */
   protected JsonArray toArray(IndexedValueProvider values) {
     int s = values.size();
     JsonArrayBuilder builder = provider.createArrayBuilder();
@@ -138,6 +175,13 @@ public class DefaultJsonConverter implements JsonConverter {
   }
 
 
+  /**
+   * Convert a number to a JSON number.
+   *
+   * @param number the number to convert
+   *
+   * @return the JSON representation
+   */
   protected JsonNumber toNumber(Number number) {
     if (number instanceof Integer || number instanceof AtomicInteger) {
       return provider.createValue(number.intValue());
@@ -149,6 +193,13 @@ public class DefaultJsonConverter implements JsonConverter {
   }
 
 
+  /**
+   * Convert a value to a JSON object.
+   *
+   * @param values the values to convert
+   *
+   * @return a JSON object holding the values
+   */
   protected JsonObject toObject(ValueProvider values) {
     JsonObjectBuilder builder = provider.createObjectBuilder();
     values.visit((k, v) -> builder.add(k, convertAny(v)));

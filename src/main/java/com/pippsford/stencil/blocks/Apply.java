@@ -23,10 +23,13 @@ import com.pippsford.stencil.value.ValueAccessor;
  */
 public class Apply implements Block {
 
+  /** Pattern to match an ID. */
   protected static final Pattern PATTERN_ID;
 
+  /** Pattern to match a literal. */
   protected static final Pattern PATTERN_LITERAL;
 
+  /** Pattern to match separators like comma or whitespace. */
   protected static final Pattern PATTERN_SEPARATOR;
 
   static {
@@ -43,6 +46,9 @@ public class Apply implements Block {
    */
   protected final String[] functionName;
 
+  /**
+   * The output value key.
+   */
   protected final String[] outParameter;
 
 

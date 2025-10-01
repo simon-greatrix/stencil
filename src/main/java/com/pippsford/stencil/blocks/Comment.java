@@ -17,6 +17,11 @@ public class Comment implements Block {
   private final boolean isValue;
 
 
+  /**
+   * New instance.
+   *
+   * @param isValue is this a "value comment" or a "directive comment"?
+   */
   public Comment(boolean isValue) {
     this.isValue = isValue;
   }

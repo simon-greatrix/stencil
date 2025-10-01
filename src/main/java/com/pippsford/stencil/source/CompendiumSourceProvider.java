@@ -125,12 +125,22 @@ public class CompendiumSourceProvider implements SourceProvider {
   private ClassLoader classLoader;
 
 
+  /**
+   * New instance.
+   *
+   * @param paths sources to use
+   */
   public CompendiumSourceProvider(List<String> paths) {
     sources = paths.stream().map(CompendiumSourceProvider::initialiseSource).collect(Collectors.toList());
     classLoader = Thread.currentThread().getContextClassLoader();
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param paths sources to use
+   */
   public CompendiumSourceProvider(String... paths) {
     sources = Arrays.stream(paths).map(CompendiumSourceProvider::initialiseSource).collect(Collectors.toList());
     classLoader = Thread.currentThread().getContextClassLoader();
@@ -223,6 +233,11 @@ public class CompendiumSourceProvider implements SourceProvider {
   }
 
 
+  /**
+   * Set the class loader with which to load the compendium.
+   *
+   * @param classLoader the class loader
+   */
   @SuppressFBWarnings("EI_EXPOSE_REP")
   public void setClassLoader(ClassLoader classLoader) {
     this.classLoader = classLoader;

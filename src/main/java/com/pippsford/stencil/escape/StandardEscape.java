@@ -98,6 +98,7 @@ public enum StandardEscape implements Escape {
     }
   },
 
+  /** Produces a "log safe" output. */
   LOG {
     @Override
     public String escape(String input) {

@@ -9,13 +9,24 @@ import com.pippsford.stencil.StencilException;
  */
 public class StencilNotFoundException extends StencilException {
 
+  /**
+   * New instance.
+   *
+   * @param message the error message
+   */
   public StencilNotFoundException(String message) {
     super(message);
   }
 
 
-  public StencilNotFoundException(String message, Exception e) {
-    super(message, e);
+  /**
+   * New instance.
+   *
+   * @param message the error message
+   * @param cause   the cause
+   */
+  public StencilNotFoundException(String message, Exception cause) {
+    super(message, cause);
   }
 
 }

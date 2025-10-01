@@ -90,16 +90,33 @@ public class Stencils {
   }
 
 
+  /**
+   * Get the default value associated with a specifed key.
+   *
+   * @param key the key
+   *
+   * @return the default value
+   */
   public Object getDefaultValue(String key) {
     return defaultValues.get(key);
   }
 
 
+  /**
+   * Get the escape style resolver.
+   *
+   * @return the escape style resolver
+   */
   public EscapeResolver getEscapeResolver() {
     return escapeResolver;
   }
 
 
+  /**
+   * Get the source provider.
+   *
+   * @return the source provider
+   */
   public SourceProvider getSourceProvider() {
     return sourceProvider;
   }
@@ -136,11 +153,21 @@ public class Stencils {
   }
 
 
+  /**
+   * Set the default escape style.
+   *
+   * @param defaultEscape the new default escape style
+   */
   public void setDefaultEscape(Escape defaultEscape) {
     this.defaultEscape = (defaultEscape != null) ? defaultEscape : StandardEscape.NO_ESCAPE;
   }
 
 
+  /**
+   * Set the default resource bundle.
+   *
+   * @param defaultResourceBundle the new default resource bundle
+   */
   public void setDefaultResourceBundle(String defaultResourceBundle) {
     this.defaultResourceBundle = defaultResourceBundle;
   }

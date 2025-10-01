@@ -9,6 +9,7 @@ import com.pippsford.stencil.value.Data;
  */
 public class IsFunction implements ValueProcessor {
 
+  /** Singleton instance of this function. */
   public static final IsFunction INSTANCE = new IsFunction();
 
 

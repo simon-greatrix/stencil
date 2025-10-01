@@ -53,21 +53,43 @@ public class ClassPathSourceProvider extends IndividualSourceProvider {
   }
 
 
+  /**
+   * New instance based upon a specified package.
+   *
+   * @param classLoader the class loader
+   * @param root        the package
+   */
   public ClassPathSourceProvider(ClassLoader classLoader, Package root) {
     this(classLoader, root.getName().replace('.', '/'));
   }
 
 
+  /**
+   * New instance with a specified class loader and root class.
+   *
+   * @param classLoader the class loader
+   * @param root        the root class
+   */
   public ClassPathSourceProvider(ClassLoader classLoader, Class<?> root) {
     this(classLoader, root.getPackage());
   }
 
 
+  /**
+   * New instance based upon a specific class's location in the class path.
+   *
+   * @param root the class
+   */
   public ClassPathSourceProvider(Class<?> root) {
     this(root.getClassLoader(), root.getPackage());
   }
 
 
+  /**
+   * New instance with specified named root in the current context class loader.
+   *
+   * @param root the root name
+   */
   public ClassPathSourceProvider(String root) {
     this(null, root);
   }

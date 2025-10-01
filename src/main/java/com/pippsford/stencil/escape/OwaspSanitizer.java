@@ -17,6 +17,12 @@ public class OwaspSanitizer implements Escape {
   private final PolicyFactory policy;
 
 
+  /**
+   * New instance.
+   *
+   * @param policy source of an OWASP sanitation policy
+   * @param name   the names this escape handler handles
+   */
   public OwaspSanitizer(PolicyFactory policy, Set<String> name) {
     names = Set.copyOf(name);
     this.policy = policy;

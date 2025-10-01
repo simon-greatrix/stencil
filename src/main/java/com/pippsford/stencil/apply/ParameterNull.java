@@ -9,6 +9,7 @@ import com.pippsford.stencil.value.Data;
  */
 public class ParameterNull extends Parameter {
 
+  /** The singleton instance. */
   public static final ParameterNull INSTANCE = new ParameterNull();
 
 

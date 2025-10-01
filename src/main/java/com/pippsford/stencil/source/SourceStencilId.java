@@ -76,16 +76,31 @@ public class SourceStencilId extends StencilId {
   }
 
 
+  /**
+   * The source.
+   *
+   * @return the source
+   */
   public Source getSource() {
     return source;
   }
 
 
+  /**
+   * The root location for the source.
+   *
+   * @return the root location
+   */
   public String getSourceRoot() {
     return sourceRoot;
   }
 
 
+  /**
+   * The type of the source provider.
+   *
+   * @return the type.
+   */
   public Class<?> getSourceType() {
     return sourceType;
   }

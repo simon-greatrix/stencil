@@ -91,11 +91,23 @@ public class StringLiteral {
   }
 
 
+  /**
+   * Handle code points on the basic multilingual pane.
+   *
+   * @param buffer the buffer to write to
+   * @param cp     the code point to write
+   */
   protected void handleBMP(StringBuilder buffer, int cp) {
     buffer.append(String.format("\\u%04x", cp));
   }
 
 
+  /**
+   * Handle code points outside the basic multilingual pane that require a surrogate pair.
+   *
+   * @param buffer the buffer to write to
+   * @param cp     the code point to write
+   */
   protected void handleNonBMP(StringBuilder buffer, int cp) {
     buffer.append(String.format("\\u%04x\\u%04x", (int) Character.highSurrogate(cp), (int) Character.lowSurrogate(cp)));
   }

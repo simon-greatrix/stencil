@@ -8,7 +8,7 @@ import com.pippsford.stencil.escape.Escape;
 import com.pippsford.stencil.value.Data;
 
 /**
- * A value from the current DNA.
+ * A value.
  */
 public class SimpleValue extends BaseValue {
 

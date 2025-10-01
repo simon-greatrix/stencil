@@ -45,16 +45,31 @@ public class FramingSourceProvider implements SourceProvider {
   private BiFunction<Source, Locale, String> headerProvider = BLANK_PROVIDER;
 
 
+  /**
+   * New instance.
+   *
+   * @param sourceProvider the source provider this frames
+   */
   public FramingSourceProvider(SourceProvider sourceProvider) {
     this.sourceProvider = sourceProvider;
   }
 
 
+  /**
+   * Get the function that provides a footer.
+   *
+   * @return the footer providing function
+   */
   public BiFunction<Source, Locale, String> getFooterProvider() {
     return footerProvider;
   }
 
 
+  /**
+   * Get the function that provides a header.
+   *
+   * @return the header providing function
+   */
   public BiFunction<Source, Locale, String> getHeaderProvider() {
     return headerProvider;
   }
@@ -73,6 +88,11 @@ public class FramingSourceProvider implements SourceProvider {
   }
 
 
+  /**
+   * Get the source provider which this applies frames to.
+   *
+   * @return the source provider
+   */
   public SourceProvider getSourceProvider() {
     return sourceProvider;
   }
@@ -84,6 +104,11 @@ public class FramingSourceProvider implements SourceProvider {
   }
 
 
+  /**
+   * Set a fixed footer to frame with.
+   *
+   * @param footer the new footer
+   */
   public void setFooter(String footer) {
     footerProvider = new ConstantFunction(footer);
   }
@@ -102,6 +127,11 @@ public class FramingSourceProvider implements SourceProvider {
   }
 
 
+  /**
+   * Set a fixed header to frame with.
+   *
+   * @param header the new header
+   */
   public void setHeader(String header) {
     headerProvider = new ConstantFunction(header);
   }

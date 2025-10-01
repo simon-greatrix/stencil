@@ -9,13 +9,24 @@ import com.pippsford.stencil.StencilException;
  */
 public class StencilParseFailedException extends StencilException {
 
+  /**
+   * New instance.
+   *
+   * @param message the error message
+   */
   public StencilParseFailedException(String message) {
     super(message);
   }
 
 
-  public StencilParseFailedException(String s, Exception e) {
-    super(s, e);
+  /**
+   * New instance.
+   *
+   * @param message the error message
+   * @param cause   the cause
+   */
+  public StencilParseFailedException(String message, Exception cause) {
+    super(message, cause);
   }
 
 }

@@ -20,11 +20,17 @@ public class MemorySourceProvider extends IndividualSourceProvider {
   private final Map<String, String> sourceFiles = Collections.synchronizedMap(new HashMap<>());
 
 
+  /** New instance rooted at "". */
   public MemorySourceProvider() {
     this("");
   }
 
 
+  /**
+   * New instance with the specified root.
+   *
+   * @param name the name for the root
+   */
   public MemorySourceProvider(String name) {
     root = (name != null) ? name : "";
   }

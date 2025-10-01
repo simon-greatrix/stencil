@@ -10,11 +10,22 @@ import com.pippsford.stencil.StencilException;
 public class StencilStorageException extends StencilException {
 
 
+  /**
+   * New instance.
+   *
+   * @param message the error message
+   */
   public StencilStorageException(String message) {
     super(message);
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param message the error message
+   * @param cause   the cause
+   */
   public StencilStorageException(String message, Throwable cause) {
     super(message, cause);
   }

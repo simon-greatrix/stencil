@@ -1,14 +1,14 @@
 package com.pippsford.stencil.value;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.json.JsonNumber;
-import javax.json.JsonString;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonString;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
 
 /**
  * A data carrier with lazily initialized mutability. Data structures are hierarchical with levels being separated by '.'s in the parameter name.
@@ -46,6 +46,28 @@ public class Data {
           return ((JsonNumber) value).numberValue();
         case STRING:
           return ((JsonString) value).getString();
+        default:
+          // Unreachable line
+          throw new InternalError("Unknown JSON type:" + value.getValueType());
+      }
+    }
+
+    if (raw instanceof jakarta.json.JsonValue) {
+      jakarta.json.JsonValue value = (jakarta.json.JsonValue) raw;
+      switch (value.getValueType()) {
+        case NULL:
+          return null;
+        case ARRAY:
+        case OBJECT:
+          return value;
+        case TRUE:
+          return Boolean.TRUE;
+        case FALSE:
+          return Boolean.FALSE;
+        case NUMBER:
+          return ((jakarta.json.JsonNumber) value).numberValue();
+        case STRING:
+          return ((jakarta.json.JsonString) value).getString();
         default:
           // Unreachable line
           throw new InternalError("Unknown JSON type:" + value.getValueType());
@@ -132,6 +154,11 @@ public class Data {
   }
 
 
+  /**
+   * Get the value provider for this.
+   *
+   * @return the value provider
+   */
   public ValueProvider getProvider() {
     return provider;
   }

@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TemplateParser {
 
+  /** Logger for this class. */
   protected static final Logger logger = LoggerFactory.getLogger(TemplateParser.class);
 
   /** Regular expression for matching key=value settings. */

@@ -16,24 +16,45 @@ public abstract class Parameter implements Comparable<Parameter> {
 
   private static final Pattern IS_NUMBER = Pattern.compile("[+-]?(?:[0-9]*\\.)?[0-9]+(?:[Ee][+-]?[0-9]+)?");
 
+  /** The raw value from the stencil. */
   protected final String rawValue;
 
 
+  /**
+   * New instance.
+   *
+   * @param rawValue the raw value from the stencil
+   */
   protected Parameter(String rawValue) {
     this.rawValue = rawValue;
   }
 
 
+  /**
+   * Convert the value of this parameter to a Boolean.
+   *
+   * @return this parameter's value as a Boolean.
+   */
   public boolean asBoolean() {
     return TypeSafeMap.asBoolean(getValue());
   }
 
 
+  /**
+   * Convert the value of this parameter to a Number.
+   *
+   * @return this parameter's value as a Number.
+   */
   public BigDecimal asNumber() {
     return new BigDecimal(asString());
   }
 
 
+  /**
+   * Convert the value of this parameter to a String.
+   *
+   * @return this parameter's value as a String
+   */
   public String asString() {
     return TypeSafeMap.asString(getValue());
   }
@@ -78,11 +99,21 @@ public abstract class Parameter implements Comparable<Parameter> {
   }
 
 
+  /**
+   * Get the raw value for this parameter. This could be a literal, or a key.
+   *
+   * @return the raw value
+   */
   public String getRaw() {
     return rawValue;
   }
 
 
+  /**
+   * Get the value of this parameter.
+   *
+   * @return the value
+   */
   public abstract Object getValue();
 
 
@@ -93,9 +124,19 @@ public abstract class Parameter implements Comparable<Parameter> {
   }
 
 
+  /**
+   * Does this parameter have a fixed literal value?.
+   *
+   * @return true if the value is fixed
+   */
   public abstract boolean isLiteral();
 
 
+  /**
+   * Is the value of this parameter null?.
+   *
+   * @return true if this is null
+   */
   public boolean isNull() {
     return getValue() == null;
   }
@@ -118,6 +159,13 @@ public abstract class Parameter implements Comparable<Parameter> {
   }
 
 
+  /**
+   * Create a parameter instance which takes a value from the supplied data, if appropriate.
+   *
+   * @param data the data to take a value from
+   *
+   * @return the new instance
+   */
   public abstract Parameter withData(Data data);
 
 }

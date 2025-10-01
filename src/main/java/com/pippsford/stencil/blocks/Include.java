@@ -18,6 +18,13 @@ public class Include implements Block {
   /** Functional interface for a template provider that can throw a StencilException if there is a problem. */
   public interface TemplateProvider {
 
+    /**
+     * Get a template.
+     *
+     * @return the template
+     *
+     * @throws StencilException if the template cannot be acquired
+     */
     Template get() throws StencilException;
 
   }
@@ -31,6 +38,11 @@ public class Include implements Block {
   private Template template;
 
 
+  /**
+   * New instance.
+   *
+   * @param loader provider of templates
+   */
   public Include(TemplateProvider loader) {
     this.loader = loader;
   }

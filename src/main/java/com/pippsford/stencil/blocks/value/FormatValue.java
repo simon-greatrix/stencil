@@ -17,6 +17,13 @@ public class FormatValue extends BaseValue {
   private final String format;
 
 
+  /**
+   * New instance.
+   *
+   * @param escapeStyle the escape style
+   * @param param       the parameter to format
+   * @param format      the format specifier
+   */
   public FormatValue(Escape escapeStyle, String param, String format) {
     super(BlockTypes.VALUE_FORMAT, escapeStyle, param);
     this.format = format;

@@ -23,9 +23,9 @@ public class BlockParser {
   private final Match staticContent;
 
   /**
-   * Source file.
+   * Source text.
    */
-  private final String stencilName;
+  private final String source;
 
   /**
    * Current position of compilation.
@@ -41,20 +41,20 @@ public class BlockParser {
   /**
    * New parser for specified source page.
    *
-   * @param stencilName the source
+   * @param source the source
    */
-  public BlockParser(String stencilName) {
-    this.stencilName = stencilName;
+  public BlockParser(String source) {
+    this.source = source;
     BlockTypes[] bs = BlockTypes.values();
     matches = new BlockMatch[bs.length];
     for (int i = 0; i < bs.length; i++) {
-      matches[i] = new BlockMatch(bs[i], stencilName);
+      matches[i] = new BlockMatch(bs[i], source);
     }
 
-    staticContent = new Match(null, stencilName);
+    staticContent = new Match(null, source);
     staticContent.start = 0;
-    staticContent.end = stencilName.length() - 1;
-    length = stencilName.length();
+    staticContent.end = source.length() - 1;
+    length = source.length();
   }
 
 
@@ -98,7 +98,7 @@ public class BlockParser {
     int end = Math.min(length, m.start);
     staticContent.start = pos;
     staticContent.end = end;
-    staticContent.text = stencilName.substring(pos, end);
+    staticContent.text = source.substring(pos, end);
     pos = end;
     return new FixMatch(staticContent);
   }

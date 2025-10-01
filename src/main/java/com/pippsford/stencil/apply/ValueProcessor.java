@@ -10,6 +10,14 @@ import com.pippsford.stencil.value.Data;
 @FunctionalInterface
 public interface ValueProcessor {
 
+  /**
+   * Apply the process.
+   *
+   * @param valueProvider the data to process
+   * @param arguments     the arguments into the process
+   *
+   * @return the result of the process
+   */
   Object apply(Data valueProvider, Parameter[] arguments);
 
 }

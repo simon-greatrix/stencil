@@ -18,6 +18,11 @@ public class MutableMapValueProvider implements MutableValueProvider {
   private final ValueProvider parent;
 
 
+  /**
+   * New instance.
+   *
+   * @param parent the parent value provider
+   */
   public MutableMapValueProvider(ValueProvider parent) {
     this.parent = parent;
   }

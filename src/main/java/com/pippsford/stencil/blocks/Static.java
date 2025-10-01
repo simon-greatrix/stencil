@@ -33,6 +33,11 @@ public class Static implements Block {
   }
 
 
+  /**
+   * Get the text of this block.
+   *
+   * @return the text
+   */
   public String getText() {
     return text;
   }
@@ -44,6 +49,11 @@ public class Static implements Block {
   }
 
 
+  /**
+   * Is this a required block?. A block could be optional whitespace.
+   *
+   * @return true if required.
+   */
   public boolean isRequired() {
     return isRequired;
   }

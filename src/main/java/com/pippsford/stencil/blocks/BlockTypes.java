@@ -202,6 +202,10 @@ public enum BlockTypes {
   }
 
 
+  /** Is this block a value or a directive?.
+   *
+   * @return true if a value
+   */
   public boolean isValue() {
     return isValue;
   }

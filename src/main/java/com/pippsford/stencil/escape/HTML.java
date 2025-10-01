@@ -156,10 +156,11 @@ public class HTML {
       return "";
     }
 
-    return escape(Encoding.decodeHtml(input));
+    return escape(Encoding.decodeHtml(input, false));
   }
 
 
+  /** New instance. */
   protected HTML() {
     // do nothing
   }

@@ -57,6 +57,11 @@ public class MessageStencilId extends StencilId {
   }
 
 
+  /**
+   * Get the message ID in the resource bundle.
+   *
+   * @return the message ID
+   */
   public String getMessageId() {
     return messageId;
   }

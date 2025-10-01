@@ -7,11 +7,22 @@ package com.pippsford.stencil;
  */
 public class StencilException extends Exception {
 
+  /**
+   * New instance.
+   *
+   * @param message the error message
+   */
   protected StencilException(String message) {
     super(message);
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param message the error message
+   * @param cause   the cause
+   */
   protected StencilException(String message, Throwable cause) {
     super(message, cause);
   }

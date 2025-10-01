@@ -7,8 +7,10 @@ package com.pippsford.stencil.escape;
  */
 public class JsonScriptLiteral extends StringLiteral {
 
+  /** Singleton that escapes to JSON. */
   public static final JsonScriptLiteral JSON = new JsonScriptLiteral(false);
 
+  /** Singleton that escapes to strict ASCII. */
   public static final JsonScriptLiteral JSON_ASCII = new JsonScriptLiteral(true);
 
 

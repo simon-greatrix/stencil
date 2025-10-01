@@ -7,6 +7,11 @@ package com.pippsford.stencil.source;
  */
 public class CompendiumMarkerMissingException extends StencilStorageException {
 
+  /**
+   * New instance with the specified message.
+   *
+   * @param message the message
+   */
   public CompendiumMarkerMissingException(String message) {
     super(message);
   }

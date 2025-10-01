@@ -17,6 +17,11 @@ public class FileSourceProvider extends IndividualSourceProvider {
   private final Path rootPath;
 
 
+  /**
+   * New instance.
+   *
+   * @param rootPath the document root
+   */
   public FileSourceProvider(Path rootPath) {
     this.rootPath = rootPath.toAbsolutePath();
   }

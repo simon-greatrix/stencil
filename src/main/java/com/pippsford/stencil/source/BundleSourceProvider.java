@@ -15,9 +15,15 @@ import com.pippsford.stencil.SourceProvider;
  */
 public class BundleSourceProvider implements SourceProvider {
 
+  /** The name of the resource bundle. */
   protected final String bundleName;
 
 
+  /**
+   * New instance.
+   *
+   * @param bundleName the name of the resource bundle
+   */
   public BundleSourceProvider(String bundleName) {
     this.bundleName = bundleName;
   }

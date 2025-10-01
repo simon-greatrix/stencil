@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.json.JsonValue;
-import javax.json.spi.JsonProvider;
+import jakarta.json.JsonValue;
+import jakarta.json.spi.JsonProvider;
 
 import org.junit.jupiter.api.Test;
 

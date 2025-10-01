@@ -7,8 +7,10 @@ package com.pippsford.stencil.escape;
  */
 public class EcmaScriptLiteral extends StringLiteral {
 
+  /** ECMA style string escaping to Unicode. */
   public static final EcmaScriptLiteral ECMA = new EcmaScriptLiteral(false);
 
+  /** ECMA style string escaping to ASCII. */
   public static final EcmaScriptLiteral ECMA_ASCII = new EcmaScriptLiteral(true);
 
 

@@ -11,6 +11,14 @@ import java.util.Objects;
 public class ValueAccessor {
 
 
+  /**
+   * Get a value including inherited ones.
+   *
+   * @param provider the value provider
+   * @param names    the key array
+   *
+   * @return the value
+   */
   public static Object get(ValueProvider provider, String[] names) {
     return get(provider, names, 0);
   }
@@ -27,6 +35,14 @@ public class ValueAccessor {
   }
 
 
+  /**
+   * Get a value ignoring inherited values.
+   *
+   * @param provider the value provider
+   * @param names    the key array
+   *
+   * @return the value
+   */
   public static Object getLocal(ValueProvider provider, String[] names) {
     return getLocal(provider, names, 0);
   }
@@ -115,6 +131,13 @@ public class ValueAccessor {
   }
 
 
+  /**
+   * Put a value into a given value provider.
+   *
+   * @param provider the value provider
+   * @param names    the key names
+   * @param value    the value to put
+   */
   public static void put(MutableValueProvider provider, String[] names, Object value) {
     put(provider, names, 0, value);
   }
@@ -134,6 +157,13 @@ public class ValueAccessor {
   }
 
 
+  /**
+   * Convert a dot-separated name to a key array.
+   *
+   * @param param the dot-separated name
+   *
+   * @return the array of keys
+   */
   public static String[] toKey(String param) {
     return param.split("\\.");
   }

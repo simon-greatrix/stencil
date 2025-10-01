@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.spi.JsonProvider;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.spi.JsonProvider;
 
 import org.junit.jupiter.api.Test;
 
-import io.setl.json.Canonical;
+import com.pippsford.json.Canonical;
 import com.pippsford.stencil.blocks.Pojo;
 
 /**

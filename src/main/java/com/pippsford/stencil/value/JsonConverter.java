@@ -1,6 +1,6 @@
 package com.pippsford.stencil.value;
 
-import javax.json.JsonValue;
+import jakarta.json.JsonValue;
 
 /**
  * Class for converting values in {@link Data} instances to JSON.

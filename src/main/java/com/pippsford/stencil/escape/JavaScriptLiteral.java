@@ -7,8 +7,10 @@ package com.pippsford.stencil.escape;
  */
 public class JavaScriptLiteral extends StringLiteral {
 
+  /** Escape to a Unicode JavaScript literal. */
   public static final JavaScriptLiteral JAVA = new JavaScriptLiteral(false);
 
+  /** Escape to a strict ASCII JavaScript literal. */
   public static final JavaScriptLiteral JAVA_ASCII = new JavaScriptLiteral(true);
 
 

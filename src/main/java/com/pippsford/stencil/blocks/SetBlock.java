@@ -13,6 +13,7 @@ import com.pippsford.stencil.value.Data;
  */
 public class SetBlock implements Block {
 
+  /** The singleton instance of this block. */
   public static final SetBlock INSTANCE = new SetBlock();
 
 

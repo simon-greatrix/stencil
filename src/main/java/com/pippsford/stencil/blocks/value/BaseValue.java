@@ -26,9 +26,17 @@ public abstract class BaseValue implements Block {
    */
   protected final String[] param;
 
+  /** The block type. */
   protected final BlockTypes type;
 
 
+  /**
+   * New instance.
+   *
+   * @param type        the block type
+   * @param escapeStyle the escape style
+   * @param param       the value's parameter key
+   */
   protected BaseValue(BlockTypes type, Escape escapeStyle, String param) {
     this.escapeStyle = escapeStyle;
     this.param = ValueAccessor.toKey(param);
@@ -36,6 +44,15 @@ public abstract class BaseValue implements Block {
   }
 
 
+  /**
+   * Get the unescaped text for this block.
+   *
+   * @param locale the locale
+   * @param zoneId the time zone
+   * @param data   the data
+   *
+   * @return the text
+   */
   protected abstract String getText(Locale locale, ZoneId zoneId, Data data);
 
 
