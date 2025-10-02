@@ -1,6 +1,10 @@
 package com.pippsford.stencil.value;
 
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.annotation.Nonnull;
@@ -9,6 +13,7 @@ import jakarta.json.JsonNumber;
 import jakarta.json.JsonString;
 import jakarta.json.JsonStructure;
 import jakarta.json.JsonValue;
+import jakarta.json.JsonValue.ValueType;
 
 /**
  * A data carrier with lazily initialized mutability. Data structures are hierarchical with levels being separated by '.'s in the parameter name.
@@ -16,6 +21,9 @@ import jakarta.json.JsonValue;
  * @author Simon Greatrix on 05/01/2021.
  */
 public class Data {
+
+  private static final Map<ValueType, Function<JsonValue, Object>> JSON_ACCESSORS;
+
 
   /**
    * Convert various raw data to more convenient forms.
@@ -32,46 +40,7 @@ public class Data {
 
     if (raw instanceof JsonValue) {
       JsonValue value = (JsonValue) raw;
-      switch (value.getValueType()) {
-        case NULL:
-          return null;
-        case ARRAY:
-        case OBJECT:
-          return value;
-        case TRUE:
-          return Boolean.TRUE;
-        case FALSE:
-          return Boolean.FALSE;
-        case NUMBER:
-          return ((JsonNumber) value).numberValue();
-        case STRING:
-          return ((JsonString) value).getString();
-        default:
-          // Unreachable line
-          throw new InternalError("Unknown JSON type:" + value.getValueType());
-      }
-    }
-
-    if (raw instanceof jakarta.json.JsonValue) {
-      jakarta.json.JsonValue value = (jakarta.json.JsonValue) raw;
-      switch (value.getValueType()) {
-        case NULL:
-          return null;
-        case ARRAY:
-        case OBJECT:
-          return value;
-        case TRUE:
-          return Boolean.TRUE;
-        case FALSE:
-          return Boolean.FALSE;
-        case NUMBER:
-          return ((jakarta.json.JsonNumber) value).numberValue();
-        case STRING:
-          return ((jakarta.json.JsonString) value).getString();
-        default:
-          // Unreachable line
-          throw new InternalError("Unknown JSON type:" + value.getValueType());
-      }
+      return JSON_ACCESSORS.get(value.getValueType()).apply(value);
     }
 
     if (raw instanceof AtomicBoolean) {
@@ -98,6 +67,18 @@ public class Data {
     return new Data(ValueAccessor.makeProvider(ValueProvider.NULL_VALUE_PROVIDER, input));
   }
 
+
+  static {
+    EnumMap<ValueType, Function<JsonValue, Object>> map = new EnumMap<>(ValueType.class);
+    map.put(ValueType.ARRAY, json -> json);
+    map.put(ValueType.FALSE, json -> Boolean.FALSE);
+    map.put(ValueType.OBJECT, json -> json);
+    map.put(ValueType.NULL, json -> null);
+    map.put(ValueType.NUMBER, json -> ((JsonNumber) json).numberValue());
+    map.put(ValueType.STRING, json -> ((JsonString) json).getString());
+    map.put(ValueType.TRUE, json -> Boolean.TRUE);
+    JSON_ACCESSORS = Collections.unmodifiableMap(map);
+  }
 
   private MutableValueProvider mutable;
 

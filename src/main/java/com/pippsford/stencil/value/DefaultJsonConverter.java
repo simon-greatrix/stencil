@@ -2,10 +2,12 @@ package com.pippsford.stencil.value;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiFunction;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
@@ -21,6 +23,67 @@ import jakarta.json.spi.JsonProvider;
  * @author Simon Greatrix on 10/11/2021.
  */
 public class DefaultJsonConverter implements JsonConverter {
+
+  private static final List<String> BLACKLISTED_NAMES = List.of(
+      "java.",
+      "javax.",
+      "com.sun.",
+      "jdk.",
+      "sun."
+  );
+
+  private static final List<BiFunction<JsonProvider, Object, JsonValue>> CONVERTERS = List.of(
+      (p, o) -> (o == null) ? JsonValue.NULL : null,
+      (p, o) -> (o instanceof JsonValue) ? (JsonValue) o : null,
+      (p, o) -> (o instanceof CharSequence) ? p.createValue(((CharSequence) o).toString()) : null,
+      (p, o) -> (o instanceof Number) ? toNumber(p, (Number) o) : null,
+      (p, o) -> (o instanceof Boolean) ? (((Boolean) o) ? JsonValue.TRUE : JsonValue.FALSE) : null,
+      (p, o) -> (o instanceof AtomicBoolean) ? (((AtomicBoolean) o).get() ? JsonValue.TRUE : JsonValue.FALSE) : null,
+      (p, o) -> (o instanceof Enum) ? p.createValue(((Enum<?>) o).name()) : null,
+      (p, o) -> isBlacklisted(o) ? p.createValue(String.valueOf(o)) : null
+  );
+
+
+  /**
+   * Check if an object should not be JSON expanded.
+   *
+   * @param object the object to check
+   *
+   * @return true if the object should not be expanded.
+   */
+  protected static boolean isBlacklisted(Object object) {
+    if (object instanceof Collection<?> || object instanceof Map<?, ?>) {
+      return false;
+    }
+
+    String className = object.getClass().getName();
+    for (String prefix : BLACKLISTED_NAMES) {
+      if (className.startsWith(prefix)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  /**
+   * Convert a number to a JSON number.
+   *
+   * @param provider the JSON implementation
+   * @param number   the number to convert
+   *
+   * @return the JSON representation
+   */
+  protected static JsonNumber toNumber(JsonProvider provider, Number number) {
+    if (number instanceof Integer || number instanceof AtomicInteger) {
+      return provider.createValue(number.intValue());
+    }
+    if (number instanceof Long || number instanceof AtomicLong) {
+      return provider.createValue(number.longValue());
+    }
+    return provider.createValue(new BigDecimal(number.toString()));
+  }
+
 
   /** The JSON provider used to create JSON values. */
   protected final JsonProvider provider;
@@ -56,30 +119,11 @@ public class DefaultJsonConverter implements JsonConverter {
    * @return the JsonValue that corresponds to the object
    */
   protected JsonValue convertAny(Object object) {
-    if (object == null) {
-      return JsonValue.NULL;
-    }
-    if (object instanceof JsonValue) {
-      return (JsonValue) object;
-    }
-    if (object instanceof CharSequence) {
-      return provider.createValue(((CharSequence) object).toString());
-    }
-    if (object instanceof Number) {
-      return toNumber((Number) object);
-    }
-    if (object instanceof Boolean) {
-      return ((Boolean) object) ? JsonValue.TRUE : JsonValue.FALSE;
-    }
-    if (object instanceof AtomicBoolean) {
-      return ((AtomicBoolean) object).get() ? JsonValue.TRUE : JsonValue.FALSE;
-    }
-    if (object instanceof Enum) {
-      return provider.createValue(((Enum<?>) object).name());
-    }
-
-    if (isBlacklisted(object)) {
-      return provider.createValue(String.valueOf(object));
+    for (BiFunction<JsonProvider, Object, JsonValue> converter : CONVERTERS) {
+      JsonValue value = converter.apply(provider, object);
+      if (value != null) {
+        return value;
+      }
     }
 
     if (!processed.add(object)) {
@@ -128,27 +172,6 @@ public class DefaultJsonConverter implements JsonConverter {
 
 
   /**
-   * Check if an object should not be JSON expanded.
-   *
-   * @param object the object to check
-   *
-   * @return true if the object should not be expanded.
-   */
-  protected boolean isBlacklisted(Object object) {
-    if (object instanceof Collection<?> || object instanceof Map<?, ?>) {
-      return false;
-    }
-
-    String className = object.getClass().getName();
-    return className.startsWith("java.")
-        || className.startsWith("javax.")
-        || className.startsWith("com.sun.")
-        || className.startsWith("jdk.")
-        || className.startsWith("sun.");
-  }
-
-
-  /**
    * The maximum number of levels to expand the object.
    *
    * @param maxDepth the new maximum depth
@@ -172,24 +195,6 @@ public class DefaultJsonConverter implements JsonConverter {
       builder.add(convertAny(values.get(i)));
     }
     return builder.build();
-  }
-
-
-  /**
-   * Convert a number to a JSON number.
-   *
-   * @param number the number to convert
-   *
-   * @return the JSON representation
-   */
-  protected JsonNumber toNumber(Number number) {
-    if (number instanceof Integer || number instanceof AtomicInteger) {
-      return provider.createValue(number.intValue());
-    }
-    if (number instanceof Long || number instanceof AtomicLong) {
-      return provider.createValue(number.longValue());
-    }
-    return provider.createValue(new BigDecimal(number.toString()));
   }
 
 

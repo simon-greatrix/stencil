@@ -155,6 +155,14 @@ public class Context {
   }
 
 
+  /**
+   * New context retain the changes between the 'before' and 'after' contexts.
+   *
+   * @param before the before context
+   * @param after  the after context
+   *
+   * @return a new context instance
+   */
   public Context withChanges(Context before, Context after) {
     return new Context(
         this,

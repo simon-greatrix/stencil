@@ -1,5 +1,7 @@
 package com.pippsford.stencil.blocks.value;
 
+import static java.util.Map.entry;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +14,7 @@ import java.time.format.FormatStyle;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
 
 import com.pippsford.stencil.blocks.BlockTypes;
@@ -23,6 +26,29 @@ import com.pippsford.util.CopyOnWriteMap;
  * A date-time value formatted in some way.
  */
 class BaseDateTimeValue extends BaseValue {
+
+  private static final Map<String, DateTimeFormatter> FORMATTERS = Map.ofEntries(
+      entry("BASIC", DateTimeFormatter.BASIC_ISO_DATE),
+      entry("BASICDATE", DateTimeFormatter.BASIC_ISO_DATE),
+      entry("LOCALDATE", DateTimeFormatter.ISO_LOCAL_DATE),
+      entry("OFFSETDATE", DateTimeFormatter.ISO_OFFSET_DATE),
+      entry("DATE", DateTimeFormatter.ISO_DATE),
+      entry("LOCALTIME", DateTimeFormatter.ISO_LOCAL_TIME),
+      entry("OFFSETTIME", DateTimeFormatter.ISO_OFFSET_TIME),
+      entry("TIME", DateTimeFormatter.ISO_TIME),
+      entry("ZONED", DateTimeFormatter.ISO_ZONED_DATE_TIME),
+      entry("ZONEDDATETIME", DateTimeFormatter.ISO_ZONED_DATE_TIME),
+      entry("DATETIME", DateTimeFormatter.ISO_DATE_TIME),
+      entry("ORDINAL", DateTimeFormatter.ISO_ORDINAL_DATE),
+      entry("ORDINALDATE", DateTimeFormatter.ISO_ORDINAL_DATE),
+      entry("WEEKDATE", DateTimeFormatter.ISO_WEEK_DATE),
+      entry("INSTANT", DateTimeFormatter.ISO_INSTANT),
+      entry("RFC", DateTimeFormatter.RFC_1123_DATE_TIME),
+      entry("RFC1123", DateTimeFormatter.RFC_1123_DATE_TIME),
+      entry("RFC822", DateTimeFormatter.RFC_1123_DATE_TIME),
+      entry("RFC1123DATETIME", DateTimeFormatter.RFC_1123_DATE_TIME)
+  );
+
 
   static ZonedDateTime convert(Object msg, ZoneId zoneId) {
     // Convert object to a Date.
@@ -51,45 +77,9 @@ class BaseDateTimeValue extends BaseValue {
   }
 
 
-  @SuppressWarnings("SpellCheckingInspection")
   static DateTimeFormatter matchNamed(String name) {
     name = name.toUpperCase(Locale.ENGLISH).replaceAll("[\\s._-]", "").replace("ISO", "");
-    switch (name) {
-      case "BASIC":
-      case "BASICDATE":
-        return DateTimeFormatter.BASIC_ISO_DATE;
-      case "LOCALDATE":
-        return DateTimeFormatter.ISO_LOCAL_DATE;
-      case "OFFSETDATE":
-        return DateTimeFormatter.ISO_OFFSET_DATE;
-      case "DATE":
-        return DateTimeFormatter.ISO_DATE;
-      case "LOCALTIME":
-        return DateTimeFormatter.ISO_LOCAL_TIME;
-      case "OFFSETTIME":
-        return DateTimeFormatter.ISO_OFFSET_TIME;
-      case "TIME":
-        return DateTimeFormatter.ISO_TIME;
-      case "ZONED":
-      case "ZONEDDATETIME":
-        return DateTimeFormatter.ISO_ZONED_DATE_TIME;
-      case "DATETIME":
-        return DateTimeFormatter.ISO_DATE_TIME;
-      case "ORDINAL":
-      case "ORDINALDATE":
-        return DateTimeFormatter.ISO_ORDINAL_DATE;
-      case "WEEKDATE":
-        return DateTimeFormatter.ISO_WEEK_DATE;
-      case "INSTANT":
-        return DateTimeFormatter.ISO_INSTANT;
-      case "RFC":
-      case "RFC1123":
-      case "RFC822":
-      case "RFC1123DATETIME":
-        return DateTimeFormatter.RFC_1123_DATE_TIME;
-      default:
-        return null;
-    }
+    return FORMATTERS.get(name);
   }
 
 

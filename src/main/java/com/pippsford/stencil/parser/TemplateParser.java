@@ -1,8 +1,11 @@
 package com.pippsford.stencil.parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,9 +51,31 @@ public class TemplateParser {
   /** Logger for this class. */
   protected static final Logger logger = LoggerFactory.getLogger(TemplateParser.class);
 
+  private static final Map<BlockTypes, BlockHandler> HANDLERS;
 
   /** Regular expression for matching key=value settings. */
   private static final Pattern PATTERN_SETTING = Patterns.get("SETTING_VALUES");
+
+
+
+  /** A functional interface that will handle a parsed block. */
+  private interface BlockHandler {
+
+    void handle(TemplateParser tp) throws StencilParseFailedException;
+
+  }
+
+
+  /**
+   * Is the text pure whitespace that contains a new-line?.
+   *
+   * @param text the text
+   *
+   * @return true if it is just whitespace with at least one new-line
+   */
+  private static boolean isNewLineWhitespace(String text) {
+    return text.isBlank() && (text.indexOf('\n') != -1 || text.indexOf('\r') != -1);
+  }
 
 
   /**
@@ -116,6 +141,35 @@ public class TemplateParser {
   }
 
 
+  static {
+    EnumMap<BlockTypes, BlockHandler> map = new EnumMap<>(BlockTypes.class);
+    map.put(BlockTypes.APPLY, TemplateParser::parseApply);
+    map.put(BlockTypes.COMMENT, TemplateParser::parseComment);
+    map.put(BlockTypes.ELSE, TemplateParser::parseElse);
+    map.put(BlockTypes.END, TemplateParser::parseEnd);
+    map.put(BlockTypes.VALUE_HERE, TemplateParser::parseValueHere);
+    map.put(BlockTypes.IF, TemplateParser::parseIf);
+    map.put(BlockTypes.RESOURCE_1, TemplateParser::parseResource1);
+    map.put(BlockTypes.RESOURCE_2, TemplateParser::parseResource2);
+    map.put(BlockTypes.INCLUDE, TemplateParser::parseInclude);
+    map.put(BlockTypes.USE, TemplateParser::parseUse);
+    map.put(BlockTypes.SET, TemplateParser::parseSet);
+    map.put(BlockTypes.VALUE, TemplateParser::parseValue);
+    map.put(BlockTypes.VALUE_COMMENT, TemplateParser::parseValueComment);
+    map.put(BlockTypes.VALUE_DATE, TemplateParser::parseValueDate);
+    map.put(BlockTypes.VALUE_TIME, TemplateParser::parseValueTime);
+    map.put(BlockTypes.VALUE_DATE_TIME, TemplateParser::parseValueDateTime);
+    map.put(BlockTypes.VALUE_DATE_TIME_2, TemplateParser::parseValueDateTime2);
+    map.put(BlockTypes.VALUE_DATE_TIME_HERE, TemplateParser::parseValueDateTimeHere);
+    map.put(BlockTypes.VALUE_FORMAT, TemplateParser::parseValueFormat);
+    map.put(BlockTypes.VALUE_FORMAT_HERE, TemplateParser::parseValueFormatHere);
+    map.put(BlockTypes.VALUE_NUMBER, TemplateParser::parseValueNumber);
+    map.put(BlockTypes.VALUE_NUMBER_HERE, TemplateParser::parseValueNumberHere);
+    map.put(BlockTypes.LOOP, TemplateParser::parseLoop);
+
+    HANDLERS = Collections.unmodifiableMap(map);
+  }
+
   final List<Block> blocks = new ArrayList<>();
 
   private final BlockTypes endsWith;
@@ -160,6 +214,28 @@ public class TemplateParser {
   }
 
 
+  private boolean isFollowedByValue(int index) {
+    index++;
+    if (index >= blocks.size()) {
+      return false;
+    }
+    Block b = blocks.get(index);
+    BlockTypes t = b.getType();
+    return t != null && t.isValue();
+  }
+
+
+  private boolean isPrecededByValue(int index) {
+    index--;
+    if (index < 0) {
+      return false;
+    }
+    Block b = blocks.get(index);
+    BlockTypes t = b.getType();
+    return t != null && t.isValue();
+  }
+
+
   /**
    * Create a template from the input.
    *
@@ -172,89 +248,14 @@ public class TemplateParser {
   }
 
 
-  private boolean parseBlock() throws StencilParseFailedException {
-    switch (fixMatch.type) {
-      case APPLY:
-        blocks.add(new Apply(fixMatch.groups[2], fixMatch.groups[1], fixMatch.groups[3]));
-        break;
-      case COMMENT:
-        blocks.add(new Comment(false));
-        break;
-      case ELSE:
-        parseElse();
-        return false;
-      case END:
-        parseEnd();
-        return false;
-      case VALUE_HERE:
-        parseValueHere();
-        break;
-      case IF:
-        parseIf();
-        break;
-      case RESOURCE_1:
-        if (context.getBundle() == null) {
-          Location location = fixMatch.getLocation();
-          throw new StencilParseFailedException("Resource bundle is unset at " + location.getRow() + ":" + location.getColumn() + " in "
-              + context.getStencilId().getLogId());
-        }
-        blocks.add(new Resource(context, context.getBundle(), fixMatch.groups[1]));
-        break;
-      case RESOURCE_2:
-        blocks.add(new Resource(context, fixMatch.groups[1], fixMatch.groups[2]));
-        break;
-      case INCLUDE:
-        parseInclude();
-        break;
-      case USE:
-        parseUse();
-        break;
-      case SET:
-        blocks.add(SetBlock.INSTANCE);
-        parseSet(fixMatch.groups[1]);
-        break;
-      case VALUE:
-        blocks.add(new SimpleValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2]));
-        break;
-      case VALUE_COMMENT:
-        blocks.add(new Comment(true));
-        break;
-      case VALUE_DATE:
-        blocks.add(new DateValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
-        break;
-      case VALUE_TIME:
-        blocks.add(new TimeValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
-        break;
-      case VALUE_DATE_TIME:
-        blocks.add(new DateTimeValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
-        break;
-      case VALUE_DATE_TIME_2:
-        blocks.add(new DateTimeValue2(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3], fixMatch.groups[4]));
-        break;
-      case VALUE_DATE_TIME_HERE:
-        blocks.add(new DateTimeValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
-        break;
-      case VALUE_FORMAT:
-        blocks.add(new FormatValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
-        break;
-      case VALUE_FORMAT_HERE:
-        blocks.add(new FormatValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
-        break;
-      case VALUE_NUMBER:
-        blocks.add(new NumberValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
-        break;
-      case VALUE_NUMBER_HERE:
-        blocks.add(new NumberValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
-        break;
-      case LOOP:
-        parseLoop();
-        break;
-      default:
-        // unreachable code
-        throw new AssertionError("Unknown enumeration constant: " + fixMatch.type);
-    }
+  private void parseApply() {
+    blocks.add(new Apply(fixMatch.groups[2], fixMatch.groups[1], fixMatch.groups[3]));
+  }
 
-    return true;
+
+  private boolean parseBlock() throws StencilParseFailedException {
+    HANDLERS.get(fixMatch.type).handle(this);
+    return fixMatch.type != BlockTypes.ELSE && fixMatch.type != BlockTypes.END;
   }
 
 
@@ -270,6 +271,11 @@ public class TemplateParser {
               + context.getStencilId().getLogId(), e
       );
     }
+  }
+
+
+  private void parseComment() {
+    blocks.add(new Comment(false));
   }
 
 
@@ -339,11 +345,24 @@ public class TemplateParser {
   }
 
 
-  private void parseSet(String settings) throws StencilParseFailedException {
-    if (settings == null) {
-      return;
+  private void parseResource1() throws StencilParseFailedException {
+    if (context.getBundle() == null) {
+      Location location = fixMatch.getLocation();
+      throw new StencilParseFailedException("Resource bundle is unset at " + location.getRow() + ":" + location.getColumn() + " in "
+          + context.getStencilId().getLogId());
     }
-    context = updateContext(context, settings, false);
+    blocks.add(new Resource(context, context.getBundle(), fixMatch.groups[1]));
+  }
+
+
+  private void parseResource2() {
+    blocks.add(new Resource(context, fixMatch.groups[1], fixMatch.groups[2]));
+  }
+
+
+  private void parseSet() throws StencilParseFailedException {
+    blocks.add(SetBlock.INSTANCE);
+    context = updateContext(context, fixMatch.groups[1], false);
   }
 
 
@@ -355,6 +374,46 @@ public class TemplateParser {
 
   private void parseUse() throws StencilParseFailedException {
     parseBlockElseEnd((main, other) -> new UseDirective(fixMatch.groups[1], main, other));
+  }
+
+
+  private void parseValue() throws StencilParseFailedException {
+    blocks.add(new SimpleValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2]));
+  }
+
+
+  private void parseValueComment() {
+    blocks.add(new Comment(true));
+  }
+
+
+  private void parseValueDate() throws StencilParseFailedException {
+    blocks.add(new DateValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
+  }
+
+
+  private void parseValueDateTime() throws StencilParseFailedException {
+    blocks.add(new DateTimeValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
+  }
+
+
+  private void parseValueDateTime2() throws StencilParseFailedException {
+    blocks.add(new DateTimeValue2(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3], fixMatch.groups[4]));
+  }
+
+
+  private void parseValueDateTimeHere() throws StencilParseFailedException {
+    blocks.add(new DateTimeValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
+  }
+
+
+  private void parseValueFormat() throws StencilParseFailedException {
+    blocks.add(new FormatValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
+  }
+
+
+  private void parseValueFormatHere() throws StencilParseFailedException {
+    blocks.add(new FormatValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
   }
 
 
@@ -374,6 +433,21 @@ public class TemplateParser {
 
     // retain [set] changes to context
     context = context.withChanges(newContext, newParser.context);
+  }
+
+
+  private void parseValueNumber() throws StencilParseFailedException {
+    blocks.add(new NumberValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
+  }
+
+
+  private void parseValueNumberHere() throws StencilParseFailedException {
+    blocks.add(new NumberValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
+  }
+
+
+  private void parseValueTime() throws StencilParseFailedException {
+    blocks.add(new TimeValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
   }
 
 
@@ -397,26 +471,18 @@ public class TemplateParser {
 
     // if it doesn't have a new-line in it, it is not template layout
     String text = staticBlock.getText();
-    if (!text.isBlank() || (text.indexOf('\n') == -1 && text.indexOf('\r') == -1)) {
+    if (!isNewLineWhitespace(text)) {
       return;
     }
 
     // new line after a value should be kept as it is probably output layout
-    if (index > 0) {
-      Block b = blocks.get(index - 1);
-      BlockTypes t = b.getType();
-      if (t != null && t.isValue()) {
-        return;
-      }
+    if (isPrecededByValue(index)) {
+      return;
     }
 
     // new line before a value should be kept as it is probably output layout
-    if (index < blocks.size() - 1) {
-      Block b = blocks.get(index + 1);
-      BlockTypes t = b.getType();
-      if (t != null && t.isValue()) {
-        return;
-      }
+    if (isFollowedByValue(index)) {
+      return;
     }
 
     // non-required whitespace with a new line that is neither preceded nor succeeded by a value

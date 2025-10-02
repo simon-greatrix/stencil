@@ -12,7 +12,6 @@ import org.owasp.html.Encoding;
  */
 public class HTML {
 
-
   /**
    * Check a character for eliding. The return value indicates what was seen:
    *
@@ -33,12 +32,7 @@ public class HTML {
     char c0 = builder.charAt(index);
 
     // Check for CR, Delete, C1 codes, and BMP non-characters
-    if (
-        (0x7f <= c0 && c0 <= 0x9f)
-            || (0xfdd0 <= c0 && c0 <= 0xfdef)
-            || (c0 == 0xfffe)
-            || (c0 == 0xffff)
-    ) {
+    if (isBadChar(c0)) {
       // These characters must be elided
       return 0;
     }
@@ -94,27 +88,36 @@ public class HTML {
     // hidden. Therefore, I canonicalize all new-line indicators ( CR, LF, CRLF ) to LF.
 
     // Fast check.
-    final int length = builder.length();
-    int index = 0;
-    int check;
-    boolean isGood = true;
-    while (index < length) {
-      check = checkCharacter(builder, index);
-      if (check <= 0) {
-        isGood = false;
-        break;
-      }
-      index += check;
-    }
-
-    if (isGood) {
+    int index = escapeFastCheck(builder);
+    if (index == -1) {
       return builder.toString();
     }
 
     // need to fix something
+    escapeFix(builder, index);
+    return builder.toString();
+  }
+
+
+  private static int escapeFastCheck(StringBuilder builder) {
+    final int length = builder.length();
+    int index = 0;
+    while (index < length) {
+      int check = checkCharacter(builder, index);
+      if (check <= 0) {
+        return index;
+      }
+      index += check;
+    }
+    return -1;
+  }
+
+
+  private static void escapeFix(StringBuilder builder, int index) {
+    final int length = builder.length();
     int out = index;
     while (index < length) {
-      check = checkCharacter(builder, index);
+      int check = checkCharacter(builder, index);
       switch (check) {
         case -1:
           index += 2;
@@ -140,7 +143,6 @@ public class HTML {
     }
 
     builder.setLength(out);
-    return builder.toString();
   }
 
 
@@ -157,6 +159,25 @@ public class HTML {
     }
 
     return escape(Encoding.decodeHtml(input, false));
+  }
+
+
+  private static boolean isBadChar(char c) {
+    // C1 codes
+    if (0x7f <= c && c <= 0x9f) {
+      return true;
+    }
+
+    // Non-characters
+    if (0xfdd0 <= c && c <= 0xfdef) {
+      return true;
+    }
+    if ((c == 0xfffe) || (c == 0xffff)) {
+      return true;
+    }
+
+    // it is a good character
+    return false;
   }
 
 

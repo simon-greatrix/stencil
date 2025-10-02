@@ -10,6 +10,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+/**
+ * Regular expression patterns used during the parse.
+ */
 public class Patterns {
 
   private static final Pattern LABEL = Pattern.compile("![A-Z_]+!");

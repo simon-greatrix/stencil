@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
  * Pre-parse a document to find and process all [global] directives.
  */
 public class PreParser {
+
   /** Logger for this class. */
   protected static final Logger logger = LoggerFactory.getLogger(PreParser.class);
 
@@ -30,16 +31,36 @@ public class PreParser {
   private Context context;
 
 
+  /**
+   * New instance.
+   *
+   * @param stencils  the stencils instance
+   * @param stencilId the ID of the stencil being processed
+   */
   public PreParser(Stencils stencils, StencilId stencilId) {
     this.context = new Context(stencils, stencilId);
   }
 
 
+  /**
+   * Get the context. Note: the context is updated during processing.
+   *
+   * @return the context
+   */
   public Context getContext() {
     return context;
   }
 
 
+  /**
+   * Pre-process the text, handling all [global] directives, updating the text in the process.
+   *
+   * @return the updated text
+   *
+   * @throws StencilNotFoundException    if the specified stencil cannot be found
+   * @throws StencilStorageException     if the specified stencil cannot be loaded
+   * @throws StencilParseFailedException if the stencil contains errors
+   */
   public String process() throws StencilNotFoundException, StencilStorageException, StencilParseFailedException {
     String text = context.getStencilId().getText();
 
