@@ -7,6 +7,9 @@ import com.pippsford.stencil.blocks.BlockTypes;
  */
 public class BlockParser {
 
+  /** The matcher for a here-value. */
+  private final BlockMatch here;
+
   /**
    * Length of the page source in characters.
    */
@@ -18,14 +21,14 @@ public class BlockParser {
   private final BlockMatch[] matches;
 
   /**
-   * A match result for static content.
-   */
-  private final Match staticContent;
-
-  /**
    * Source text.
    */
   private final String source;
+
+  /**
+   * A match result for static content.
+   */
+  private final Match staticContent;
 
   /**
    * Current position of compilation.
@@ -50,6 +53,7 @@ public class BlockParser {
     for (int i = 0; i < bs.length; i++) {
       matches[i] = new BlockMatch(bs[i], source);
     }
+    here = matches[BlockTypes.VALUE_HERE.ordinal()];
 
     staticContent = new Match(null, source);
     staticContent.start = 0;
@@ -63,7 +67,7 @@ public class BlockParser {
    *
    * @return next block, or null if finished
    */
-  FixMatch next() {
+  FixMatch next(boolean normalMode) {
     if (pushedBack != null) {
       FixMatch match = pushedBack;
       pushedBack = null;
@@ -79,13 +83,19 @@ public class BlockParser {
       match.update(pos);
     }
 
-    // find the next match
-    Match m = matches[0];
-    for (int i = 1; i < matches.length; i++) {
-      Match mi = matches[i];
-      if (mi.start < m.start) {
-        m = mi;
+    Match m;
+    if (normalMode) {
+      // find the next match
+      m = matches[0];
+      for (int i = 1; i < matches.length; i++) {
+        Match mi = matches[i];
+        if (mi.start < m.start) {
+          m = mi;
+        }
       }
+    } else {
+      // when inverted, we only care about here-values
+      m = here;
     }
 
     // if matched at current position, we have match

@@ -71,6 +71,12 @@
  * <h3 id="everything-else">Everything Else</h3>
  * <p>If the input is not a map, array, list, nor iterable, then it is treated as Java Bean, and its properties can be access according to the normal
  * conventions for such.</p>
+ * <h2>The "Global" directives</h2>
+ * <p>A stencil may contain `[global key=value]` directives. These are processed before all other parts of the stencil even if they are inside comments or
+ * here-values. The directive may be used to set the initial bundle, the initial escape style, or to select inverted processing mode. If multiple directives
+ * are found in the document, the last directive wins.</p>
+ * <p>In normal processing mode, values and directives are ignored within here-values and processed everywhere else. In inverted mode, values and directed are
+ * ignored everywhere except within here-values.</p>
  * <h2 id="literals-values-and-directives">Literals, Values and Directives</h2>
  * <p>A stencil contains literal text, which is simply copied to the output, values which are replaced with data from the input, and directives which control
  * processing.</p>

@@ -8,7 +8,7 @@ package com.pippsford.stencil.parser;
 class FixMatch extends Match {
 
   /**
-   * The matched sub-groups from the pattern.
+   * The matched subgroups from the pattern.
    */
   final String[] groups;
 

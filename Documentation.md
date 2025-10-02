@@ -108,7 +108,14 @@ available.
 If the input is not a map, array, list, nor iterable, then it is treated as Java Bean, and its properties can be access according to the normal conventions for
 such.
 
+# The "Global" directives
 
+A stencil may contain `[global key=value]` directives. These are processed before all other parts of the stencil even if they are inside comments or 
+here-values. The directive may be used to set the initial bundle, the initial escape style, or to select inverted processing mode. If multiple directives 
+are found in the document, the last directive wins.
+
+In normal processing mode, values and directives are ignored within here-values and processed everywhere else. In inverted mode, values and directed are 
+ignored everywhere except within here-values. 
 
 # Literals, Values and Directives
 

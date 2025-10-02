@@ -32,6 +32,12 @@ public enum StandardEscape implements Escape {
     public String escape(String input) {
       return HTML.escapeOnce(input);
     }
+
+
+    @Override
+    public boolean isHandlerFor(String name) {
+      return super.isHandlerFor(name) || "HTML".equals(name.toUpperCase(Locale.ROOT));
+    }
   },
 
   /** Ensure every character is escaped. */

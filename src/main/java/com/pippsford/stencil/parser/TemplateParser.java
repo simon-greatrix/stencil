@@ -17,6 +17,8 @@ import com.pippsford.stencil.blocks.IfDirective;
 import com.pippsford.stencil.blocks.Include;
 import com.pippsford.stencil.blocks.Include.TemplateProvider;
 import com.pippsford.stencil.blocks.LoopDirective;
+import com.pippsford.stencil.blocks.Patterns;
+import com.pippsford.stencil.blocks.ProcessingMode;
 import com.pippsford.stencil.blocks.Resource;
 import com.pippsford.stencil.blocks.SetBlock;
 import com.pippsford.stencil.blocks.Static;
@@ -46,8 +48,9 @@ public class TemplateParser {
   /** Logger for this class. */
   protected static final Logger logger = LoggerFactory.getLogger(TemplateParser.class);
 
+
   /** Regular expression for matching key=value settings. */
-  private static final Pattern SETTING = BlockTypes.loadPattern("SETTING_VALUES");
+  private static final Pattern PATTERN_SETTING = Patterns.get("SETTING_VALUES");
 
 
   /**
@@ -64,27 +67,78 @@ public class TemplateParser {
    */
   public static Template parse(Stencils stencils, StencilId stencilId)
       throws StencilParseFailedException, StencilNotFoundException, StencilStorageException {
-    Context context = new Context(stencils, stencilId);
     logger.debug("Loading {} for parsing", stencilId);
-    String text = stencilId.getText();
-    logger.debug("Starting parse of {}", stencilId);
-
-    TemplateParser templateParser = new TemplateParser();
-    templateParser.context = context;
-    templateParser.parser = new BlockParser(text);
+    PreParser preParser = new PreParser(stencils, stencilId);
+    String text = preParser.process();
+    TemplateParser templateParser = new TemplateParser(preParser.getContext(), text);
     return templateParser.makeTemplate();
+  }
+
+
+  static Context updateContext(Context context, String settings, boolean allowMode) throws StencilParseFailedException {
+    Matcher matcher = PATTERN_SETTING.matcher(settings);
+
+    while (matcher.find()) {
+      String key = matcher.group(1);
+      String value = matcher.group(2);
+
+      switch (key.toLowerCase(Locale.ROOT)) {
+        case "mode":
+          if (allowMode) {
+            if (value.equalsIgnoreCase(ProcessingMode.NORMAL.name())) {
+              context = context.withMode(ProcessingMode.NORMAL);
+            } else if (value.equalsIgnoreCase(ProcessingMode.INVERTED.name())) {
+              context = context.withMode(ProcessingMode.INVERTED);
+            } else {
+              throw new StencilParseFailedException("Unknown processing mode \"" + value + "\".");
+            }
+          } else {
+            throw new StencilParseFailedException("Processing mode can only be set in [global] directives.");
+          }
+          break;
+        case "bundle":
+          // Set the default bundle
+          context = context.withBundle(value);
+          break;
+        case "escape":
+          // set the default escape scheme
+          context = context.withEscapeStyle(context.getStencils().getEscapeResolver().forName(value, context.getEscapeStyle()));
+          break;
+        case "version":
+          // ignore - intended to set a parsing version
+          break;
+        default:
+          throw new StencilParseFailedException("Unrecognised setting \"" + key + "\".");
+      }
+    }
+
+    return context;
   }
 
 
   final List<Block> blocks = new ArrayList<>();
 
-  Context context;
+  private final BlockTypes endsWith;
 
-  BlockTypes endsWith;
+  private final BlockParser parser;
 
-  FixMatch fixMatch;
+  private Context context;
 
-  BlockParser parser;
+  private FixMatch fixMatch;
+
+
+  private TemplateParser(Context context, String text) {
+    this.context = context;
+    parser = new BlockParser(text);
+    endsWith = null;
+  }
+
+
+  private TemplateParser(TemplateParser original, BlockTypes endsWith) {
+    context = original.context;
+    parser = original.parser;
+    this.endsWith = endsWith;
+  }
 
 
   private boolean handleMatch() throws StencilParseFailedException {
@@ -98,7 +152,7 @@ public class TemplateParser {
 
     // was the match on static text?
     if (fixMatch.type == null) {
-      blocks.add(new Static(fixMatch.text, false));
+      blocks.add(new Static(fixMatch.text, context.getMode() == ProcessingMode.INVERTED));
       return true;
     }
 
@@ -112,14 +166,7 @@ public class TemplateParser {
    * @return the template created
    */
   private Template makeTemplate() throws StencilParseFailedException {
-    do {
-      fixMatch = parser.next();
-    } while (handleMatch());
-
-    // strip optional whitespace
-    for (int i = blocks.size() - 1; i >= 0; i--) {
-      removeWhitespace(i);
-    }
+    runParser();
     Block[] arrBlocks = blocks.toArray(new Block[0]);
     return new Template(arrBlocks);
   }
@@ -140,7 +187,7 @@ public class TemplateParser {
         parseEnd();
         return false;
       case VALUE_HERE:
-        blocks.add(new Static(context.getEscapeStyle(fixMatch.groups[1]).escape(fixMatch.groups[3]), true));
+        parseValueHere();
         break;
       case IF:
         parseIf();
@@ -296,41 +343,37 @@ public class TemplateParser {
     if (settings == null) {
       return;
     }
-    Matcher matcher = SETTING.matcher(settings);
-    while (matcher.find()) {
-      String key = matcher.group(1);
-      String value = matcher.group(2);
-
-      switch (key.toLowerCase(Locale.ROOT)) {
-        case "bundle":
-          // Set the default bundle
-          context = context.withBundle(value);
-          break;
-        case "escape":
-          // set the default escape scheme
-          context = context.withEscapeStyle(context.getStencils().getEscapeResolver().forName(value, context.getEscapeStyle()));
-          break;
-        case "version":
-          // ignore - intended to set a parsing version
-          break;
-        default:
-          throw new StencilParseFailedException("Unrecognised setting \"" + key + "\".");
-      }
-    }
+    context = updateContext(context, settings, false);
   }
 
 
   private Template parseSubTemplate(BlockTypes newEnd) throws StencilParseFailedException {
-    TemplateParser templateParser = new TemplateParser();
-    templateParser.context = context;
-    templateParser.parser = parser;
-    templateParser.endsWith = newEnd;
+    TemplateParser templateParser = new TemplateParser(this, newEnd);
     return templateParser.makeTemplate();
   }
 
 
   private void parseUse() throws StencilParseFailedException {
     parseBlockElseEnd((main, other) -> new UseDirective(fixMatch.groups[1], main, other));
+  }
+
+
+  private void parseValueHere() throws StencilParseFailedException {
+    if (context.getMode() == ProcessingMode.NORMAL) {
+      blocks.add(new Static(context.getEscapeStyle(fixMatch.groups[1]).escape(fixMatch.groups[3]), true));
+      return;
+    }
+
+    // inverted mode, so the here-value is actually a template
+    Context newContext = context
+        .withEscapeStyle(context.getEscapeStyle(fixMatch.groups[1]))
+        .withMode(ProcessingMode.NORMAL);
+    TemplateParser newParser = new TemplateParser(newContext, fixMatch.groups[3]);
+    newParser.runParser();
+    blocks.addAll(newParser.blocks);
+
+    // retain [set] changes to context
+    context = context.withChanges(newContext, newParser.context);
   }
 
 
@@ -378,6 +421,19 @@ public class TemplateParser {
 
     // non-required whitespace with a new line that is neither preceded nor succeeded by a value
     blocks.remove(index);
+  }
+
+
+  private void runParser() throws StencilParseFailedException {
+    boolean isNormal = context.getMode() == ProcessingMode.NORMAL;
+    do {
+      fixMatch = parser.next(isNormal);
+    } while (handleMatch());
+
+    // strip optional whitespace
+    for (int i = blocks.size() - 1; i >= 0; i--) {
+      removeWhitespace(i);
+    }
   }
 
 }

@@ -1,13 +1,7 @@
 package com.pippsford.stencil.blocks;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Possible block types within a page.
@@ -126,65 +120,6 @@ public enum BlockTypes {
   VALUE_NUMBER_HERE;
 
 
-  private static String expandPattern(Properties properties, String name) {
-    String value = properties.getProperty(name);
-    if (value == null) {
-      throw new InternalError("No definition found for \"" + name + "\".");
-    }
-    Pattern p = Pattern.compile("![A-Z_]+!");
-    while (true) {
-      Matcher m = p.matcher(value);
-      if (!m.find()) {
-        return value;
-      }
-      String r = expandPattern(properties, m.group());
-      value = value.replace(m.group(), r);
-    }
-  }
-
-
-  /**
-   * Get a named regular expression used in parsing the block specification.
-   *
-   * @param name the name to look up
-   *
-   * @return the pattern
-   */
-  public static Pattern loadPattern(String name) {
-    String patternText = loadPatternText(name);
-    try {
-      return Pattern.compile(
-          patternText,
-          Pattern.UNICODE_CHARACTER_CLASS + Pattern.COMMENTS + Pattern.CASE_INSENSITIVE + Pattern.DOTALL
-      );
-    } catch (PatternSyntaxException badPattern) {
-      throw new InternalError("Bad specification for " + name + "\n" + patternText, badPattern);
-    }
-  }
-
-
-  /**
-   * Get a named regular expression used in parsing the block specification.
-   *
-   * @param name the name to look up
-   *
-   * @return the pattern
-   */
-  @SuppressFBWarnings(
-      value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE",
-      justification = "False positive. Redundant check is in the try-with-resources generated code")
-  public static String loadPatternText(String name) {
-    Properties properties = new Properties();
-    try (InputStream in = BlockTypes.class.getResourceAsStream("patterns.xml")) {
-      properties.loadFromXML(in);
-    } catch (IOException ioException) {
-      throw new InternalError("Required internal resource was unavailable", ioException);
-    }
-
-    return expandPattern(properties, name);
-  }
-
-
   private final boolean isValue;
 
   /**
@@ -197,12 +132,13 @@ public enum BlockTypes {
    * Create new block type with specified pattern.
    */
   BlockTypes() {
-    pattern = loadPattern(name());
+    pattern = Patterns.get(name());
     isValue = name().startsWith("VALUE_") || name().equals("VALUE");
   }
 
 
-  /** Is this block a value or a directive?.
+  /**
+   * Is this block a value or a directive?.
    *
    * @return true if a value
    */

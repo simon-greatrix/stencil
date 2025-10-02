@@ -69,6 +69,10 @@
     short | medium | long | full
   </entry>
 
+  <entry key="!IGNORE!">
+    (?: \s+ ignore )
+  </entry>
+
   <!-- Block definitions -->
 
   <!-- Apply a function, with optional arguments, to the current data. -->
@@ -191,11 +195,29 @@
     \s* \} \s* \]
   </entry>
 
+  <!-- Set global properties prior to parsing. -->
+  <!-- [global mode=inverted, escape=no_escape, bundle = new_bundle] -->
+  <!-- [global ignore ignore mode=inverted, escape=no_escape] -->
+  <entry key="GLOBAL">
+    \[ \s*
+    global
+    (!IGNORE!)?
+    !IGNORE!*
+    \s+ (
+    !SETTING!
+    (?:
+    !SEPARATOR!
+    !SETTING!
+    )*
+    )
+    \s* \]
+  </entry>
+
   <!-- Set some properties -->
   <!-- [set escape=no_escape, bundle = new_bundle] -->
   <entry key="SET">
     \[ \s*
-    set (?: \s+
+    set \s+
     (
     !SETTING!
     (?:
@@ -203,7 +225,6 @@
     !SETTING!
     )*
     )
-    )?
     \s* \]
   </entry>
 
@@ -216,7 +237,7 @@
   </entry>
 
   <!-- basic value -->
-  <!-- {value -->
+  <!-- {value} -->
   <entry key="VALUE">
     \{ \s*
     !FLAGS!

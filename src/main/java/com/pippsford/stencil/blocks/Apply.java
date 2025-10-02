@@ -24,19 +24,13 @@ import com.pippsford.stencil.value.ValueAccessor;
 public class Apply implements Block {
 
   /** Pattern to match an ID. */
-  protected static final Pattern PATTERN_ID;
+  protected static final Pattern PATTERN_ID = Patterns.get("!ID_CHARS!");
 
   /** Pattern to match a literal. */
-  protected static final Pattern PATTERN_LITERAL;
+  protected static final Pattern PATTERN_LITERAL = Patterns.get("!LITERAL!");
 
   /** Pattern to match separators like comma or whitespace. */
-  protected static final Pattern PATTERN_SEPARATOR;
-
-  static {
-    PATTERN_SEPARATOR = BlockTypes.loadPattern("!SEPARATOR!");
-    PATTERN_LITERAL = BlockTypes.loadPattern("!LITERAL!");
-    PATTERN_ID = BlockTypes.loadPattern("!ID_CHARS!");
-  }
+  protected static final Pattern PATTERN_SEPARATOR = Patterns.get("!SEPARATOR!");
 
   /** The optional arguments to the function. */
   protected final Parameter[] arguments;

@@ -1,6 +1,7 @@
 package com.pippsford.stencil.escape;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import org.owasp.html.PolicyFactory;
@@ -30,8 +31,23 @@ public class OwaspSanitizer implements Escape {
 
 
   @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof OwaspSanitizer that)) {
+      return false;
+    }
+    return Objects.equals(names, that.names);
+  }
+
+
+  @Override
   public String escape(String input) {
     return policy.sanitize(input);
+  }
+
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(names);
   }
 
 
