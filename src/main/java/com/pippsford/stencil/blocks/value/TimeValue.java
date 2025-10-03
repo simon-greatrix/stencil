@@ -13,12 +13,13 @@ public class TimeValue extends BaseDateTimeValue {
   /**
    * Time value renderer.
    *
+   * @param template    the definition in the stencil
    * @param escapeStyle escaping style to use
    * @param param       parameter to render
    * @param timeStyle   the format selection
    */
-  public TimeValue(Escape escapeStyle, String param, String timeStyle) {
-    super(BlockTypes.VALUE_TIME, escapeStyle, param, timeStyle, DateTimeFormatter::ofLocalizedTime);
+  public TimeValue(String template, Escape escapeStyle, String param, String timeStyle) {
+    super(BlockTypes.VALUE_TIME, template, escapeStyle, param, timeStyle, DateTimeFormatter::ofLocalizedTime);
   }
 
 }

@@ -3,8 +3,8 @@ package com.pippsford.stencil.value;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Provide values from a parent provider and allow them to be over-ridden and extended by storing values in a map.
@@ -28,23 +28,26 @@ public class MutableMapValueProvider implements MutableValueProvider {
   }
 
 
-  @Nullable
   @Override
-  public Object get(@Nonnull String name) {
-    Object r = map.get(name);
-    return (r != null) ? r : parent.get(name);
-  }
-
-
-  @Nullable
-  @Override
-  public Object getLocal(@Nonnull String name) {
-    return map.get(name);
+  @Nonnull
+  public OptionalValue get(@Nonnull String name) {
+    return getLocal(name).orDefault(() -> parent.get(name));
   }
 
 
   @Override
-  public void put(@Nonnull String name, @Nullable Object newValue) {
+  @Nonnull
+  public OptionalValue getLocal(@Nonnull String name) {
+    Object value = map.get(name);
+    if (value != null || map.containsKey(name)) {
+      return OptionalValue.of(value);
+    }
+    return OptionalValue.absent();
+  }
+
+
+  @Override
+  public void put(@Nonnull String name, @Nonnull Object newValue) {
     map.put(name, newValue);
   }
 

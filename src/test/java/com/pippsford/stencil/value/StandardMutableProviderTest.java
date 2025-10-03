@@ -21,17 +21,17 @@ class StandardMutableProviderTest {
     p2.put("e", "Eve");
     p2.put("b", "Bertha");
 
-    assertEquals("Alice", p1.get("a"));
-    assertEquals("Alice", p2.get("a"));
+    assertEquals("Alice", p1.get("a").value());
+    assertEquals("Alice", p2.get("a").value());
 
-    assertEquals("Bob", p1.get("b"));
-    assertEquals("Bertha", p2.get("b"));
+    assertEquals("Bob", p1.get("b").value());
+    assertEquals("Bertha", p2.get("b").value());
 
-    assertNull(p1.get("e"));
-    assertEquals("Eve", p2.get("e"));
+    assertNull(p1.get("e").value());
+    assertEquals("Eve", p2.get("e").value());
 
-    assertNull(p1.get("f"));
-    assertNull(p2.get("f"));
+    assertNull(p1.get("f").value());
+    assertNull(p2.get("f").value());
   }
 
 

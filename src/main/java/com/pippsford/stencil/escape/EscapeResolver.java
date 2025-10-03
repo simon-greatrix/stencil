@@ -3,7 +3,7 @@ package com.pippsford.stencil.escape;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.pippsford.stencil.parser.StencilParseFailedException;
 import com.pippsford.util.CopyOnWriteMap;

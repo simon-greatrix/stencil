@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -33,13 +34,13 @@ class DataTest {
     ValueProvider valueProvider = new BeanValueProvider(ValueProvider.NULL_VALUE_PROVIDER, pojo1);
     Data data = new Data(valueProvider);
 
-    assertEquals(13, data.get("other.age"));
-    assertEquals("Mr", data.get(new String[]{"other", "title"}));
+    assertEquals(13, data.get("other.age").value());
+    assertEquals("Mr", data.get(new String[]{"other", "title"}).value());
     assertSame(valueProvider, data.getProvider());
 
     data.put("other.properties.a.b.c.d", "value");
-    assertEquals("value", data.get("other.properties.a.b.c.d"));
-    assertEquals(MutableMapValueProvider.class, data.get("other.properties.a.b.c").getClass());
+    assertEquals("value", data.get("other.properties.a.b.c.d").value());
+    assertEquals(MutableMapValueProvider.class, data.get("other.properties.a.b.c").value().getClass());
 
     // provider is now mutable
     assertNotSame(valueProvider, data.getProvider());
@@ -50,13 +51,14 @@ class DataTest {
   void test2() {
     ValueProvider valueProvider = new MutableMapValueProvider(ValueProvider.NULL_VALUE_PROVIDER);
     Data data = new Data(valueProvider);
-    assertNull(data.get("key"));
+    assertNull(data.get("key").value());
+    assertTrue(data.get("key").isMissing());
     assertSame(valueProvider, data.getProvider());
     data.put("key", "value");
 
     // input was mutable, so not changed by put
     assertSame(valueProvider, data.getProvider());
-    assertEquals("value", data.get("key"));
+    assertEquals("value", data.get("key").value());
   }
 
 
@@ -73,37 +75,39 @@ class DataTest {
     data.put("properties", Map.of("a", new int[0], "c", ""));
 
     String json = Canonical.cast(data.toJson()).toPrettyString();
-    assertEquals("{\n"
-        + "  \"age\": 45,\n"
-        + "  \"error\": \"<<< UNAVAILABLE : INTERNAL ERROR >>>\",\n"
-        + "  \"name\": \"Karl\",\n"
-        + "  \"other\": {\n"
-        + "    \"age\": 13,\n"
-        + "    \"error\": \"<<< UNAVAILABLE : INTERNAL ERROR >>>\",\n"
-        + "    \"name\": \"Bartholomew\",\n"
-        + "    \"other\": null,\n"
-        + "    \"properties\": {\n"
-        + "      \"a\": {\n"
-        + "        \"b\": {\n"
-        + "          \"c\": { \"d\": \"value\" }\n"
-        + "        }\n"
-        + "      },\n"
-        + "      \"isEmpty\": true,\n"
-        + "      \"l\": [ \"a\", \"b\", \"c\" ],\n"
-        + "      \"size\": 0\n"
-        + "    },\n"
-        + "    \"qualifications\": null,\n"
-        + "    \"title\": \"Mr\"\n"
-        + "  },\n"
-        + "  \"properties\": {\n"
-        + "    \"a\": [],\n"
-        + "    \"c\": \"\",\n"
-        + "    \"isEmpty\": false,\n"
-        + "    \"size\": 2\n"
-        + "  },\n"
-        + "  \"qualifications\": null,\n"
-        + "  \"title\": \"Dr\"\n"
-        + "}", json);
+    assertEquals(
+        """
+            {
+              "age": 45,
+              "error": "<<< UNAVAILABLE : INTERNAL ERROR >>>",
+              "name": "Karl",
+              "other": {
+                "age": 13,
+                "error": "<<< UNAVAILABLE : INTERNAL ERROR >>>",
+                "name": "Bartholomew",
+                "other": null,
+                "properties": {
+                  "a": {
+                    "b": {
+                      "c": { "d": "value" }
+                    }
+                  },
+                  "isEmpty": true,
+                  "l": [ "a", "b", "c" ],
+                  "size": 0
+                },
+                "qualifications": null,
+                "title": "Mr"
+              },
+              "properties": {
+                "a": [],
+                "c": "",
+                "isEmpty": false,
+                "size": 2
+              },
+              "qualifications": null,
+              "title": "Dr"
+            }""", json);
   }
 
 
@@ -112,8 +116,8 @@ class DataTest {
     Data data = new Data();
     data.put("b", new AtomicBoolean(true));
     data.put("i", new AtomicInteger(2));
-    assertEquals(Boolean.TRUE, data.get("b"));
-    assertEquals(2, ((Number) data.get("i")).intValue());
+    assertEquals(Boolean.TRUE, data.get("b").value());
+    assertEquals(2, ((Number) data.get("i").safeValue()).intValue());
   }
 
 
@@ -131,12 +135,12 @@ class DataTest {
         .addNull("null")
         .build();
     data.put("json", object);
-    assertEquals("a value", data.get("json.string"));
-    assertEquals(Boolean.TRUE, data.get("json.true"));
-    assertEquals(Boolean.FALSE, data.get("json.false"));
-    assertEquals(Integer.valueOf(12345), data.get("json.number"));
-    assertEquals(array, data.get("json.array"));
-    assertNull(data.get("json.null"));
+    assertEquals("a value", data.get("json.string").value());
+    assertEquals(Boolean.TRUE, data.get("json.true").value());
+    assertEquals(Boolean.FALSE, data.get("json.false").value());
+    assertEquals(Integer.valueOf(12345), data.get("json.number").value());
+    assertEquals(array, data.get("json.array").value());
+    assertNull(data.get("json.null").value());
   }
 
 }

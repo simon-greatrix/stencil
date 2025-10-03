@@ -20,13 +20,13 @@ class ListEntryValueProviderTest {
 
   @Test
   void get() {
-    assertEquals(1, e.get("index"));
-    assertEquals(5, e.get("size"));
-    assertEquals("hello", p.get("value"));
-    assertNull(p.get("key"));
-    assertEquals("x", e.get("key"));
-    assertEquals("y", e.get("value"));
-    assertNull(p.get("z"));
+    assertEquals(1, e.get("index").value());
+    assertEquals(5, e.get("size").value());
+    assertEquals("hello", p.get("value").value());
+    assertNull(p.get("key").value());
+    assertEquals("x", e.get("key").value());
+    assertEquals("y", e.get("value").value());
+    assertNull(p.get("z").value());
   }
 
 

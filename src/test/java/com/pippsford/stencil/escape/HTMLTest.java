@@ -1,10 +1,9 @@
 package com.pippsford.stencil.escape;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import static com.pippsford.stencil.escape.HTML.escape;
 import static com.pippsford.stencil.escape.HTML.escapeOnce;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -105,7 +104,15 @@ class HTMLTest {
 
 
   @Test
-  @Disabled("The OWASP sanitizer produces illegal HTML in this case.")
+  @Disabled("""
+      The OWASP sanitizer produces illegal HTML in this case.
+      The HTML standard https://html.spec.whatwg.org/multipage/syntax.html#character-references says:
+      
+      The numeric character reference forms described above are allowed to reference any code point excluding U+000D CR, noncharacters, and controls other
+      than ASCII whitespace.
+      
+      So non-characters are forbidden, but OWASP includes supplemental non-characters as numeric entities.
+      """)
   public void testSupplementalNonCharacter() {
     assertEquals("NC  NC", HTML.escapeOnce("NC " + Character.toString(0x1fffe) + " NC"));
   }

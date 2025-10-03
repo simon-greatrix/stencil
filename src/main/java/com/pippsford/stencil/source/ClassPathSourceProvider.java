@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import com.pippsford.stencil.Source;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

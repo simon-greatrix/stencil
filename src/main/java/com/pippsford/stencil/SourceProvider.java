@@ -1,7 +1,7 @@
 package com.pippsford.stencil;
 
 import java.util.Locale;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import com.pippsford.stencil.source.StencilStorageException;
 

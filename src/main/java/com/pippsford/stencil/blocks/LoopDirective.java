@@ -9,6 +9,7 @@ import com.pippsford.stencil.StencilException;
 import com.pippsford.stencil.value.Data;
 import com.pippsford.stencil.value.IndexedValueProvider;
 import com.pippsford.stencil.value.ListEntryValueProvider;
+import com.pippsford.stencil.value.OptionalValue;
 import com.pippsford.stencil.value.ValueProvider;
 
 /**
@@ -37,7 +38,7 @@ public class LoopDirective extends Directive {
   @Override
   public void process(Writer writer, Locale locale, ZoneId zoneId, Data data) throws IOException, StencilException {
     // If no data, go to the alternative template
-    Object value = data.get(param);
+    Object value = data.get(param).value();
     if (value == null) {
       other.process(writer, locale, zoneId, data);
       return;
@@ -49,8 +50,10 @@ public class LoopDirective extends Directive {
     int size = indexed.size();
     if (size > 0) {
       for (int i = 0; i < size; i++) {
-        Object datum = indexed.get(i);
-        main.process(writer, locale, zoneId, new Data(new ListEntryValueProvider(parentProvider, i, size, datum)));
+        OptionalValue datum = indexed.get(i);
+        if (datum.isPresent()) {
+          main.process(writer, locale, zoneId, new Data(new ListEntryValueProvider(parentProvider, i, size, datum.value())));
+        }
       }
     } else {
       // No actual data

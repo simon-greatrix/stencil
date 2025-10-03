@@ -2,8 +2,7 @@ package com.pippsford.stencil.value;
 
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
 
 /**
  * Provide a value from a list or other source that can be accessed via an integer.
@@ -20,6 +19,7 @@ public class ListEntryValueProvider implements ValueProvider {
 
   private final Object value;
 
+  private final Entry<?,?> entry;
 
   /**
    * New instance.
@@ -34,39 +34,33 @@ public class ListEntryValueProvider implements ValueProvider {
     this.index = index;
     this.size = size;
     this.value = value;
+    this.entry = value instanceof Entry<?,?> ? (Entry<?,?>) value : null;
   }
 
 
-  @Nullable
   @Override
-  public Object get(@Nonnull String name) {
-    Object value = getLocal(name);
-    return (value != null) ? value : parent.get(name);
+  @Nonnull
+  public OptionalValue get(@Nonnull String name) {
+    return getLocal(name).orDefault(() -> parent.get(name));
   }
 
 
-  @Nullable
   @Override
-  public Object getLocal(String name) {
-    switch (name) {
-      case "value":
-        return (value instanceof Entry<?, ?>) ? ((Entry<?, ?>) value).getValue() : value;
-      case "index":
-        return index;
-      case "size":
-        return size;
-      case "key":
-        return (value instanceof Entry<?, ?>) ? ((Entry<?, ?>) value).getKey() : parent.get(name);
-      default:
-        return null;
-    }
+  @Nonnull
+  public OptionalValue getLocal(@Nonnull String name) {
+    return switch (name) {
+      case "value" -> OptionalValue.of(entry != null ? entry.getValue() : value);
+      case "index" -> OptionalValue.of(index);
+      case "size" -> OptionalValue.of(size);
+      case "key" -> entry != null ? OptionalValue.of(entry.getKey()) : OptionalValue.absent();
+      default -> OptionalValue.absent();
+    };
   }
 
 
   @Override
   public void visit(BiConsumer<String, Object> visitor) {
-    if (value instanceof Entry<?, ?>) {
-      Entry<?, ?> entry = (Entry<?, ?>) value;
+    if (entry!=null) {
       visitor.accept("key", entry.getKey());
       visitor.accept("value", entry.getValue());
     } else {

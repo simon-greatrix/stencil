@@ -5,8 +5,7 @@ import static com.pippsford.stencil.value.IndexedValueProvider.P_SIZE;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -35,26 +34,27 @@ public class MapValueProvider implements ValueProvider {
   }
 
 
-  @Nullable
   @Override
-  public Object get(@Nonnull String name) {
-    Object r = getLocal(name);
-    return (r != null) ? r : parent.get(name);
+  @Nonnull
+  public OptionalValue get(@Nonnull String name) {
+    return getLocal(name).orDefault(() -> parent.get(name));
   }
 
 
-  @Nullable
   @Override
-  public Object getLocal(@Nonnull String name) {
+  @Nonnull
+  public OptionalValue getLocal(@Nonnull String name) {
     Object r = map.get(name);
     if (r == null && !map.containsKey(name)) {
       if (name.equals(P_IS_EMPTY)) {
         r = map.isEmpty();
       } else if (name.equals(P_SIZE)) {
         r = map.size();
+      } else {
+        return OptionalValue.absent();
       }
     }
-    return r;
+    return OptionalValue.of(r);
   }
 
 

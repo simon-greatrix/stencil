@@ -378,7 +378,7 @@ public class TemplateParser {
 
 
   private void parseValue() throws StencilParseFailedException {
-    blocks.add(new SimpleValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2]));
+    blocks.add(new SimpleValue(fixMatch.text, context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2]));
   }
 
 
@@ -388,32 +388,32 @@ public class TemplateParser {
 
 
   private void parseValueDate() throws StencilParseFailedException {
-    blocks.add(new DateValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
+    blocks.add(new DateValue(fixMatch.text, context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
   }
 
 
   private void parseValueDateTime() throws StencilParseFailedException {
-    blocks.add(new DateTimeValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
+    blocks.add(new DateTimeValue(fixMatch.text, context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
   }
 
 
   private void parseValueDateTime2() throws StencilParseFailedException {
-    blocks.add(new DateTimeValue2(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3], fixMatch.groups[4]));
+    blocks.add(new DateTimeValue2(fixMatch.text, context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3], fixMatch.groups[4]));
   }
 
 
   private void parseValueDateTimeHere() throws StencilParseFailedException {
-    blocks.add(new DateTimeValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
+    blocks.add(new DateTimeValue(fixMatch.text, context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
   }
 
 
   private void parseValueFormat() throws StencilParseFailedException {
-    blocks.add(new FormatValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
+    blocks.add(new FormatValue(fixMatch.text, context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
   }
 
 
   private void parseValueFormatHere() throws StencilParseFailedException {
-    blocks.add(new FormatValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
+    blocks.add(new FormatValue(fixMatch.text, context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
   }
 
 
@@ -437,17 +437,17 @@ public class TemplateParser {
 
 
   private void parseValueNumber() throws StencilParseFailedException {
-    blocks.add(new NumberValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
+    blocks.add(new NumberValue(fixMatch.text, context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
   }
 
 
   private void parseValueNumberHere() throws StencilParseFailedException {
-    blocks.add(new NumberValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
+    blocks.add(new NumberValue(fixMatch.text, context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[4]));
   }
 
 
   private void parseValueTime() throws StencilParseFailedException {
-    blocks.add(new TimeValue(context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
+    blocks.add(new TimeValue(fixMatch.text, context.getEscapeStyle(fixMatch.groups[1]), fixMatch.groups[2], fixMatch.groups[3]));
   }
 
 
@@ -459,12 +459,11 @@ public class TemplateParser {
   private void removeWhitespace(int index) {
     Block block = blocks.get(index);
     // Whitespace must be in a static text block
-    if (!(block instanceof Static)) {
+    if (!(block instanceof Static staticBlock)) {
       return;
     }
 
     // required static text cannot be removed even if it is whitespace
-    Static staticBlock = (Static) block;
     if (staticBlock.isRequired()) {
       return;
     }

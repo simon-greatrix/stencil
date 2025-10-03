@@ -4,7 +4,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.pippsford.stencil.escape.Escape;
 
@@ -38,14 +38,12 @@ public class MessageStencilId extends StencilId {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof MessageStencilId)) {
+    if (!(o instanceof MessageStencilId that)) {
       return false;
     }
     if (!super.equals(o)) {
       return false;
     }
-
-    MessageStencilId that = (MessageStencilId) o;
 
     return getMessageId().equals(that.getMessageId());
   }

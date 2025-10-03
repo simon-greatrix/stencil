@@ -2,7 +2,7 @@ package com.pippsford.stencil.source;
 
 import java.util.Locale;
 import java.util.function.BiFunction;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import com.pippsford.stencil.Source;
 import com.pippsford.stencil.SourceProvider;

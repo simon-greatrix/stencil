@@ -20,7 +20,9 @@ import java.util.function.Function;
 import com.pippsford.stencil.blocks.BlockTypes;
 import com.pippsford.stencil.escape.Escape;
 import com.pippsford.stencil.value.Data;
+import com.pippsford.stencil.value.OptionalValue;
 import com.pippsford.util.CopyOnWriteMap;
+import jakarta.annotation.Nonnull;
 
 /**
  * A date-time value formatted in some way.
@@ -50,14 +52,13 @@ class BaseDateTimeValue extends BaseValue {
   );
 
 
-  static ZonedDateTime convert(Object msg, ZoneId zoneId) {
+  static ZonedDateTime convert(@Nonnull Object msg, ZoneId zoneId) {
     // Convert object to a Date.
     if (msg instanceof Date) {
       return ZonedDateTime.ofInstant(Instant.ofEpochMilli(((Date) msg).getTime()), zoneId);
     } else if (msg instanceof Number) {
       return ZonedDateTime.ofInstant(Instant.ofEpochMilli(((Number) msg).longValue()), zoneId);
-    } else if (msg instanceof Calendar) {
-      Calendar calendar = (Calendar) msg;
+    } else if (msg instanceof Calendar calendar) {
       return ZonedDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId());
     } else if (msg instanceof Instant) {
       return ZonedDateTime.ofInstant((Instant) msg, zoneId);
@@ -85,18 +86,13 @@ class BaseDateTimeValue extends BaseValue {
 
   static FormatStyle matchStyle(String name) {
     name = name.toUpperCase(Locale.ENGLISH);
-    switch (name) {
-      case "SHORT":
-        return FormatStyle.SHORT;
-      case "MEDIUM":
-        return FormatStyle.MEDIUM;
-      case "LONG":
-        return FormatStyle.LONG;
-      case "FULL":
-        return FormatStyle.FULL;
-      default:
-        return null;
-    }
+    return switch (name) {
+      case "SHORT" -> FormatStyle.SHORT;
+      case "MEDIUM" -> FormatStyle.MEDIUM;
+      case "LONG" -> FormatStyle.LONG;
+      case "FULL" -> FormatStyle.FULL;
+      default -> null;
+    };
 
   }
 
@@ -115,8 +111,8 @@ class BaseDateTimeValue extends BaseValue {
    *
    * @param param parameter to render
    */
-  protected BaseDateTimeValue(BlockTypes type, Escape escapeStyle, String param, String style, Function<FormatStyle, DateTimeFormatter> standardLocale) {
-    super(type, escapeStyle, param);
+  protected BaseDateTimeValue(BlockTypes type, String template, Escape escapeStyle, String param, String style, Function<FormatStyle, DateTimeFormatter> standardLocale) {
+    super(type, template, escapeStyle, param);
     if (style == null) {
       formatterFunction = standardLocale.apply(FormatStyle.MEDIUM)::withLocale;
       return;
@@ -143,9 +139,9 @@ class BaseDateTimeValue extends BaseValue {
 
   @Override
   protected String getText(Locale locale, ZoneId zoneId, Data data) {
-    Object msg = data.get(param);
-    if (msg == null) {
-      return "";
+    Object msg = data.get(param).value();
+    if (msg==null) {
+      return template;
     }
 
     DateTimeFormatter formatter = formatters.computeIfAbsent(locale, formatterFunction);

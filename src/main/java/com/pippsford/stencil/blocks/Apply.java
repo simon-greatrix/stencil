@@ -108,7 +108,7 @@ public class Apply implements Block {
 
   @Override
   public void process(Writer out, Locale locale, ZoneId zoneId, Data data) {
-    Object function = data.get(functionName);
+    Object function = data.get(functionName).value();
 
     int argCount = arguments.length;
     Parameter[] thisArguments = new Parameter[argCount];

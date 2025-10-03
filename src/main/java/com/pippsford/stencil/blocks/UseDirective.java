@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import com.pippsford.stencil.StencilException;
 import com.pippsford.stencil.value.Data;
+import com.pippsford.stencil.value.OptionalValue;
 import com.pippsford.stencil.value.ValueAccessor;
 
 /**
@@ -37,13 +38,13 @@ public class UseDirective extends Directive {
   @Override
   public void process(Writer writer, Locale locale, ZoneId zoneId, Data data) throws IOException, StencilException {
     // If no data, go to the alternative template
-    Object value = data.get(param);
-    if (value == null) {
+    OptionalValue value = data.get(param);
+    if (value.isMissing()) {
       other.process(writer, locale, zoneId, data);
       return;
     }
 
-    Data nextData = new Data(ValueAccessor.makeProvider(data.getProvider(), value));
+    Data nextData = new Data(ValueAccessor.makeProvider(data.getProvider(), value.value()));
     main.process(writer, locale, zoneId, nextData);
   }
 

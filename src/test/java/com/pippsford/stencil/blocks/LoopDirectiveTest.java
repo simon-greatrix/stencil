@@ -52,9 +52,12 @@ class LoopDirectiveTest {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "[loop p1.qualifications]{index}/{size}: {value}{noop}\n[else]DETAILS MISSING\n[end]");
     Map<String, Object> map = Map.of("p1", pojo1);
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map);
-    assertEquals("0/3: a100\n"
-        + "1/3: x200\n"
-        + "2/3: ztec\n", output);
+    assertEquals(
+        """
+            0/3: a100{noop}
+            1/3: x200{noop}
+            2/3: ztec{noop}
+            """, output);
   }
 
 
@@ -65,7 +68,7 @@ class LoopDirectiveTest {
         + "f={p1.qualifications.fribble} {p1.qualifications.isEmpty}");
     Map<String, Object> map = Map.of("p1", pojo1);
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map);
-    assertEquals("ztec 3 f= false", output);
+    assertEquals("ztec 3 f={p1.qualifications.fribble} false", output);
   }
 
 
@@ -83,10 +86,13 @@ class LoopDirectiveTest {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "[loop array]{index}/{size}: {value}\n[else]DETAILS MISSING\n[end]");
     Map<String, Object> map = Map.of("array", new int[]{4, 5, 6, 7});
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map);
-    assertEquals("0/4: 4\n"
-        + "1/4: 5\n"
-        + "2/4: 6\n"
-        + "3/4: 7\n", output);
+    assertEquals(
+        """
+            0/4: 4
+            1/4: 5
+            2/4: 6
+            3/4: 7
+            """, output);
   }
 
 
@@ -100,7 +106,7 @@ class LoopDirectiveTest {
 
 
   @Test
-  void test8() throws StencilException {
+  void test8() {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "Hello [loop title]{title}\n[use foo][else][end]{name}.");
     Map<String, Object> map = Map.of("name", "Karl");
     assertThrows(StencilParseFailedException.class, () -> stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map));
@@ -112,8 +118,11 @@ class LoopDirectiveTest {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "[loop m.p1]{index}:{size}:{key}:{value}:{foo}\n[end]");
     Map<String, Object> map = Map.of("m", Map.of("p1", new TreeMap<>(Map.of("a", "b", "c", "d"))), "foo", "z");
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map);
-    assertEquals("0:2:a:b:z\n"
-        + "1:2:c:d:z\n", output);
+    assertEquals(
+        """
+            0:2:a:b:z
+            1:2:c:d:z
+            """, output);
   }
 
 }

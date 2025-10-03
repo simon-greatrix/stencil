@@ -8,6 +8,7 @@ import java.util.Locale;
 import com.pippsford.stencil.blocks.BlockTypes;
 import com.pippsford.stencil.escape.Escape;
 import com.pippsford.stencil.value.Data;
+import com.pippsford.stencil.value.OptionalValue;
 import com.pippsford.util.CopyOnWriteMap;
 
 /**
@@ -31,13 +32,14 @@ public class DateTimeValue2 extends BaseValue {
   /**
    * Date value renderer.
    *
+   * @param template    the definition in the stencil
    * @param escapeStyle escaping style to use
    * @param param       parameter to render
    * @param dateStyle   the format selection for the date part
    * @param timeStyle   the format selection for the time part
    */
-  public DateTimeValue2(Escape escapeStyle, String param, String dateStyle, String timeStyle) {
-    super(BlockTypes.VALUE_DATE_TIME_2, escapeStyle, param);
+  public DateTimeValue2(String template, Escape escapeStyle, String param, String dateStyle, String timeStyle) {
+    super(BlockTypes.VALUE_DATE_TIME_2, template, escapeStyle, param);
     this.dateStyle = FormatStyle.valueOf(dateStyle.toUpperCase(Locale.ENGLISH));
     this.timeStyle = FormatStyle.valueOf(timeStyle.toUpperCase(Locale.ENGLISH));
   }
@@ -50,9 +52,9 @@ public class DateTimeValue2 extends BaseValue {
 
   @Override
   protected String getText(Locale locale, ZoneId zoneId, Data data) {
-    Object msg = data.get(param);
-    if (msg == null) {
-      return "";
+    Object msg = data.get(param).value();
+    if (msg==null) {
+      return template;
     }
 
     DateTimeFormatter formatter = formatters.computeIfAbsent(locale, this::getFormatter);

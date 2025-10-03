@@ -26,7 +26,7 @@ class IncludeTest {
 
 
   @Test
-  void notInMessages() throws StencilException {
+  void notInMessages() {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "[include header.txt]\nHello, World!\n[{test_messages, forbidden_include}]");
     sourceProvider.putFile(Locale.ROOT, "header.txt", "Header!");
 
@@ -38,7 +38,7 @@ class IncludeTest {
   public void recurse() throws StencilException {
     sourceProvider.putFile(Locale.ROOT, "recurse.txt", "{count} [if count][apply F.decrement][include recurse.txt][end]");
     stencils.setDefaultValue("F.decrement", (ValueProcessor) (d, a) -> {
-      d.put("count", ((Integer) d.get("count")) - 1);
+      d.put("count", ((Integer) d.get("count").safeValue()) - 1);
       return null;
     });
     Map<String, Object> map = Map.of("count", 5);
@@ -55,9 +55,11 @@ class IncludeTest {
     sourceProvider.putFile(Locale.ROOT, "footer.txt", "Footer!");
 
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), "");
-    assertEquals("Header!\n"
-        + "Hello, World!\n"
-        + "Footer!", output);
+    assertEquals(
+        """
+            Header!
+            Hello, World!
+            Footer!""", output);
   }
 
 }

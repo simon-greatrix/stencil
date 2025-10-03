@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Spliterator;
 
+import jakarta.annotation.Nonnull;
+
 /**
  * Set of objects backed by an IdentityHashMap.
  *
@@ -25,7 +27,7 @@ public class IdentityHashSet implements Set<Object> {
 
 
   @Override
-  public boolean addAll(Collection<?> c) {
+  public boolean addAll(@Nonnull Collection<?> c) {
     return keys.addAll(c);
   }
 
@@ -43,14 +45,14 @@ public class IdentityHashSet implements Set<Object> {
 
 
   @Override
-  public boolean containsAll(Collection<?> c) {
+  public boolean containsAll(@Nonnull Collection<?> c) {
     return keys.containsAll(c);
   }
 
 
   @Override
   public boolean equals(Object o) {
-    return keys.equals(o);
+    return (o instanceof Collection<?>) && keys.equals(o);
   }
 
 
@@ -67,6 +69,7 @@ public class IdentityHashSet implements Set<Object> {
 
 
   @Override
+  @Nonnull
   public Iterator<Object> iterator() {
     return keys.iterator();
   }
@@ -79,13 +82,13 @@ public class IdentityHashSet implements Set<Object> {
 
 
   @Override
-  public boolean removeAll(Collection<?> c) {
+  public boolean removeAll(@Nonnull Collection<?> c) {
     return keys.removeAll(c);
   }
 
 
   @Override
-  public boolean retainAll(Collection<?> c) {
+  public boolean retainAll(@Nonnull Collection<?> c) {
     return keys.retainAll(c);
   }
 
@@ -97,19 +100,22 @@ public class IdentityHashSet implements Set<Object> {
 
 
   @Override
+  @Nonnull
   public Spliterator<Object> spliterator() {
     return keys.spliterator();
   }
 
 
   @Override
+  @Nonnull
   public Object[] toArray() {
     return keys.toArray();
   }
 
 
   @Override
-  public <T> T[] toArray(T[] a) {
+  @Nonnull
+  public <T> T[] toArray(@Nonnull T[] a) {
     return keys.toArray(a);
   }
 

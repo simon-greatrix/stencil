@@ -2,7 +2,7 @@ package com.pippsford.stencil.source;
 
 import java.util.Locale;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.pippsford.stencil.escape.Escape;
 
@@ -41,11 +41,10 @@ public abstract class StencilId {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof StencilId)) {
+    if (!(o instanceof StencilId that)) {
       return false;
     }
 
-    StencilId that = (StencilId) o;
     return Objects.equals(getBundle(), that.getBundle())
         && getEscape().equals(that.getEscape())
         && getLocale().equals(that.getLocale());

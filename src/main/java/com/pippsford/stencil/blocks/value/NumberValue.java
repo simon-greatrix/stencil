@@ -26,12 +26,13 @@ public class NumberValue extends BaseValue {
   /**
    * Create a new block for formatting a number using the Java text Decimal Format system.
    *
+   * @param template    the definition in the stencil
    * @param escapeStyle the escaping style to apply after formatting.
    * @param param       the parameter to format
    * @param format      the format to apply
    */
-  public NumberValue(Escape escapeStyle, String param, String format) {
-    super(BlockTypes.VALUE_NUMBER, escapeStyle, param);
+  public NumberValue(String template, Escape escapeStyle, String param, String format) {
+    super(BlockTypes.VALUE_NUMBER, template, escapeStyle, param);
     if (format == null) {
       formatterFunction = NumberFormat::getNumberInstance;
       return;
@@ -64,7 +65,7 @@ public class NumberValue extends BaseValue {
 
   @Override
   protected String getText(Locale locale, ZoneId zoneId, Data data) {
-    Number datum = TypeSafeMap.asNumber(data.get(param));
+    Number datum = TypeSafeMap.asNumber(data.get(param).value());
     if (datum == null) {
       return "";
     }

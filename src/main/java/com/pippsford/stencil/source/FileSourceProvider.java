@@ -5,7 +5,7 @@ import static com.pippsford.common.StringUtils.logSafe;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Provider which loads resources from a file system.

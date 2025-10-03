@@ -46,16 +46,19 @@ class CompendiumSourceProviderTest {
 
   @Test
   public void test5() throws StencilStorageException, StencilNotFoundException {
-    assertEquals("\n"
-        + "this is something\n"
-        + "\n"
-        + "which goes on for a bit\n"
-        + "\n"
-        + "/and/has/paths/in/it\n"
-        + "\n"
-        + "but that's OK\n"
-        + "\n"
-        + "provided we see EOT\n", provider.getSource(Source.of("/here/it/is"), Locale.FRANCE));
+    assertEquals(
+        """
+            
+            this is something
+            
+            which goes on for a bit
+            
+            /and/has/paths/in/it
+            
+            but that's OK
+            
+            provided we see EOT
+            """, provider.getSource(Source.of("/here/it/is"), Locale.FRANCE));
   }
 
 
@@ -67,9 +70,12 @@ class CompendiumSourceProviderTest {
 
   @Test
   public void test7() throws StencilStorageException, StencilNotFoundException {
-    assertEquals("Farwell! Adieu!\n"
-        + "\n"
-        + "// slash slash //\n", provider.getSource(Source.of("/bye"), Locale.FRANCE));
+    assertEquals(
+        """
+            Farwell! Adieu!
+            
+            // slash slash //
+            """, provider.getSource(Source.of("/bye"), Locale.FRANCE));
   }
 
 

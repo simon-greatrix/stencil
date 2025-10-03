@@ -1,7 +1,6 @@
 package com.pippsford.stencil.value;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
 
 /**
  * A value provider which can be updated.
@@ -17,6 +16,6 @@ public interface MutableValueProvider extends ValueProvider {
    * @param name     the name of the value to set. The name must not contain periods.
    * @param newValue the actual new value
    */
-  void put(@Nonnull String name, @Nullable Object newValue);
+  void put(@Nonnull String name, @Nonnull Object newValue);
 
 }

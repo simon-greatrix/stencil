@@ -28,7 +28,7 @@ public class ParameterDatum extends Parameter {
 
   @Override
   public Object getValue() {
-    return myData.get(rawValue);
+    return myData.get(rawValue).value();
   }
 
 

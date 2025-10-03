@@ -79,8 +79,8 @@ public class AugmentedIndex implements ValueProcessor {
    */
   @Override
   public Object apply(Data valueProvider, Parameter[] arguments) {
-    Integer index = TypeSafeMap.asInt(valueProvider.get("index"));
-    Integer size = TypeSafeMap.asInt(valueProvider.get("size"));
+    Integer index = TypeSafeMap.asInt(valueProvider.get("index").value());
+    Integer size = TypeSafeMap.asInt(valueProvider.get("size").value());
 
     if (index == null) {
       throw new IllegalArgumentException("No 'index' property in provided data");

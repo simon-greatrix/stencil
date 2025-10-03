@@ -91,7 +91,7 @@ public class Stencils {
 
 
   /**
-   * Get the default value associated with a specifed key.
+   * Get the default value associated with a specified key.
    *
    * @param key the key
    *

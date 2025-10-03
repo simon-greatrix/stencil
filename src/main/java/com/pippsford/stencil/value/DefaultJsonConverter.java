@@ -27,6 +27,7 @@ public class DefaultJsonConverter implements JsonConverter {
   private static final List<String> BLACKLISTED_NAMES = List.of(
       "java.",
       "javax.",
+      "jakarta.",
       "com.sun.",
       "jdk.",
       "sun."
@@ -137,8 +138,7 @@ public class DefaultJsonConverter implements JsonConverter {
       }
 
       ValueProvider provider = ValueAccessor.makeProvider(ValueProvider.NULL_VALUE_PROVIDER, object);
-      if (provider instanceof IndexedValueProvider) {
-        IndexedValueProvider p = (IndexedValueProvider) provider;
+      if (provider instanceof IndexedValueProvider p) {
         if (p.isPureList()) {
           return toArray(p);
         }
@@ -192,7 +192,10 @@ public class DefaultJsonConverter implements JsonConverter {
     int s = values.size();
     JsonArrayBuilder builder = provider.createArrayBuilder();
     for (int i = 0; i < s; i++) {
-      builder.add(convertAny(values.get(i)));
+      OptionalValue value = values.get(i);
+      if(value.isPresent()) {
+        builder.add(convertAny(value.value()));
+      }
     }
     return builder.build();
   }

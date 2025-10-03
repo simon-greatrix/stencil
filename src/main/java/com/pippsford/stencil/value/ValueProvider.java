@@ -1,8 +1,7 @@
 package com.pippsford.stencil.value;
 
 import java.util.function.BiConsumer;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
 
 /**
  * The basic requirements for a value provider.
@@ -11,19 +10,19 @@ import javax.annotation.Nullable;
  */
 public interface ValueProvider {
 
-  /** A provider that always returns null. Used for handling missing values. */
+  /** A provider that always returns absent. Used for handling missing values. */
   ValueProvider NULL_VALUE_PROVIDER = new ValueProvider() {
-    @Nullable
     @Override
-    public Object get(@Nonnull String name) {
-      return null;
+    @Nonnull
+    public OptionalValue get(@Nonnull String name) {
+      return OptionalValue.absent();
     }
 
 
-    @Nullable
     @Override
-    public Object getLocal(String key) {
-      return null;
+    @Nonnull
+    public OptionalValue getLocal(@Nonnull String key) {
+      return OptionalValue.absent();
     }
 
 
@@ -35,14 +34,14 @@ public interface ValueProvider {
 
 
   /**
-   * Get the named value. May return null if the value is unspecified or is set to null.
+   * Get the named value.
    *
    * @param name the name of the value.
    *
-   * @return the value, or null
+   * @return the value
    */
-  @Nullable
-  Object get(@Nonnull String name);
+  @Nonnull
+  OptionalValue get(@Nonnull String name);
 
 
   /**
@@ -50,10 +49,10 @@ public interface ValueProvider {
    *
    * @param key the name of the value
    *
-   * @return the value, or null
+   * @return the value
    */
-  @Nullable
-  Object getLocal(String key);
+  @Nonnull
+  OptionalValue getLocal(@Nonnull String key);
 
 
   /**

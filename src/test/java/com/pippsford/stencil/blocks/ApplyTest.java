@@ -31,9 +31,7 @@ class ApplyTest {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "[apply name = foo('John')]Hello {name}");
     Map<String, Object> map = Map.of(
         "var", Instant.ofEpochMilli(1234567890123L),
-        "foo", (ValueProcessor) (a, z) -> {
-          return z[0].asString();
-        }
+        "foo", (ValueProcessor) (a, z) -> z[0].asString()
     );
     String output = stencils.write("test.txt", Locale.UK, ZoneId.of("Europe/London"), map);
     assertEquals("Hello John", output);
@@ -45,9 +43,7 @@ class ApplyTest {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "[apply name=foo('John')]Hello {name}");
     Map<String, Object> map = Map.of(
         "var", Instant.ofEpochMilli(1234567890123L),
-        "foo", (LocalizedValueProcessor) (d, l, z, v) -> {
-          return v[0].asString() + " for Locale " + l + " in zone " + z;
-        }
+        "foo", (LocalizedValueProcessor) (d, l, z, v) -> v[0].asString() + " for Locale " + l + " in zone " + z
     );
     String output = stencils.write("test.txt", Locale.UK, ZoneId.of("Europe/London"), map);
     assertEquals("Hello John for Locale en_GB in zone Europe/London", output);

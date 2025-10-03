@@ -15,7 +15,7 @@ class BlockMatch extends Match {
   final Matcher matcher;
 
   /**
-   * The matched sub-groups from the pattern.
+   * The matched subgroups from the pattern.
    */
   String[] groups;
 

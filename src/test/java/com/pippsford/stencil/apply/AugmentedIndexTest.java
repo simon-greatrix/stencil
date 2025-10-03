@@ -28,10 +28,13 @@ class AugmentedIndexTest {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "[loop list]{isFirst},{isLast},{isOdd},{isEven},{index1}:{index}={value}\n[end]");
     Map map = Map.of("list", new int[]{5, 6, 7, 8});
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map);
-    assertEquals(",,,,:0=5\n"
-        + ",,,,:1=6\n"
-        + ",,,,:2=7\n"
-        + ",,,,:3=8\n", output);
+    assertEquals(
+        """
+            {isFirst},{isLast},{isOdd},{isEven},{index1}:0=5
+            {isFirst},{isLast},{isOdd},{isEven},{index1}:1=6
+            {isFirst},{isLast},{isOdd},{isEven},{index1}:2=7
+            {isFirst},{isLast},{isOdd},{isEven},{index1}:3=8
+            """, output);
   }
 
 
@@ -50,10 +53,13 @@ class AugmentedIndexTest {
     stencils.setDefaultValue("F.index", AugmentedIndex.INSTANCE);
     Map map = Map.of("list", new int[]{5, 6, 7, 8});
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map);
-    assertEquals("true,false,false,true,1:0=5\n"
-        + "false,false,true,false,2:1=6\n"
-        + "false,false,false,true,3:2=7\n"
-        + "false,true,true,false,4:3=8\n", output);
+    assertEquals(
+        """
+            true,false,false,true,1:0=5
+            false,false,true,false,2:1=6
+            false,false,false,true,3:2=7
+            false,true,true,false,4:3=8
+            """, output);
   }
 
 
@@ -63,10 +69,13 @@ class AugmentedIndexTest {
     stencils.setDefaultValue("F.index", AugmentedIndex.INSTANCE);
     Map map = Map.of("list", new int[]{5, 6, 7, 8});
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map);
-    assertEquals("true,false,false,true,1:0=5\n"
-        + "false,false,true,false,2:1=6\n"
-        + "false,false,false,true,3:2=7\n"
-        + "false,true,true,false,4:3=8\n", output);
+    assertEquals(
+        """
+            true,false,false,true,1:0=5
+            false,false,true,false,2:1=6
+            false,false,false,true,3:2=7
+            false,true,true,false,4:3=8
+            """, output);
   }
 
 
@@ -80,14 +89,17 @@ class AugmentedIndexTest {
     stencils.setDefaultValue("F.index", AugmentedIndex.INSTANCE);
     Map map = Map.of("list", new int[]{5, 6, 7, 8, 9, 10, 11, 12});
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map);
-    assertEquals("true,false,1,1,2:0=5\n"
-        + "false,false,2,1,2:1=6\n"
-        + "false,false,3,1,2:2=7\n"
-        + "false,true,4,1,2:3=8\n"
-        + "true,false,1,2,2:4=9\n"
-        + "false,false,2,2,2:5=10\n"
-        + "false,false,3,2,2:6=11\n"
-        + "false,true,4,2,2:7=12\n", output);
+    assertEquals(
+        """
+            true,false,1,1,2:0=5
+            false,false,2,1,2:1=6
+            false,false,3,1,2:2=7
+            false,true,4,1,2:3=8
+            true,false,1,2,2:4=9
+            false,false,2,2,2:5=10
+            false,false,3,2,2:6=11
+            false,true,4,2,2:7=12
+            """, output);
   }
 
 
@@ -101,16 +113,19 @@ class AugmentedIndexTest {
     stencils.setDefaultValue("F.index", AugmentedIndex.INSTANCE);
     Map map = Map.of("list", new int[]{5, 6, 7, 8, 9, 10, 11, 12, 13, 14});
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map);
-    assertEquals("true,false,1,1,3:0=5\n"
-        + "false,false,2,1,3:1=6\n"
-        + "false,false,3,1,3:2=7\n"
-        + "false,true,4,1,3:3=8\n"
-        + "true,false,1,2,3:4=9\n"
-        + "false,false,2,2,3:5=10\n"
-        + "false,false,3,2,3:6=11\n"
-        + "false,true,4,2,3:7=12\n"
-        + "true,false,1,3,3:8=13\n"
-        + "false,true,2,3,3:9=14\n", output);
+    assertEquals(
+        """
+            true,false,1,1,3:0=5
+            false,false,2,1,3:1=6
+            false,false,3,1,3:2=7
+            false,true,4,1,3:3=8
+            true,false,1,2,3:4=9
+            false,false,2,2,3:5=10
+            false,false,3,2,3:6=11
+            false,true,4,2,3:7=12
+            true,false,1,3,3:8=13
+            false,true,2,3,3:9=14
+            """, output);
   }
 
 

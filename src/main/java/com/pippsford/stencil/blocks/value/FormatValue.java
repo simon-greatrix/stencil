@@ -6,6 +6,7 @@ import java.util.Locale;
 import com.pippsford.stencil.blocks.BlockTypes;
 import com.pippsford.stencil.escape.Escape;
 import com.pippsford.stencil.value.Data;
+import com.pippsford.stencil.value.OptionalValue;
 
 /**
  * A value formatter using the {@code String.format} style.
@@ -21,23 +22,24 @@ public class FormatValue extends BaseValue {
    * New instance.
    *
    * @param escapeStyle the escape style
+   * @param template    the definition in the stencil
    * @param param       the parameter to format
    * @param format      the format specifier
    */
-  public FormatValue(Escape escapeStyle, String param, String format) {
-    super(BlockTypes.VALUE_FORMAT, escapeStyle, param);
+  public FormatValue(String template, Escape escapeStyle, String param, String format) {
+    super(BlockTypes.VALUE_FORMAT, template, escapeStyle, param);
     this.format = format;
   }
 
 
   @Override
   protected String getText(Locale locale, ZoneId zoneId, Data data) {
-    Object datum = data.get(param);
-    if (datum == null) {
-      return "";
+    OptionalValue datum = data.get(param);
+    if (datum.isMissing()) {
+      return template;
     }
 
-    return String.format(locale, format, datum);
+    return String.format(locale, format, datum.value());
   }
 
 }

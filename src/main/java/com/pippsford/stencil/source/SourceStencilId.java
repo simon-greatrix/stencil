@@ -1,7 +1,7 @@
 package com.pippsford.stencil.source;
 
 import java.util.Locale;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.pippsford.stencil.Source;
 import com.pippsford.stencil.SourceProvider;
@@ -48,14 +48,12 @@ public class SourceStencilId extends StencilId {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof SourceStencilId)) {
+    if (!(o instanceof SourceStencilId that)) {
       return false;
     }
     if (!super.equals(o)) {
       return false;
     }
-
-    SourceStencilId that = (SourceStencilId) o;
 
     if (!getSource().equals(that.getSource())) {
       return false;

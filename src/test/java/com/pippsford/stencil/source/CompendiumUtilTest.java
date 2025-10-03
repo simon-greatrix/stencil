@@ -25,13 +25,16 @@ class CompendiumUtilTest {
 
     CompendiumUtil.main(new String[]{"sort", path.toUri().toString()});
     String out = Files.readString(path);
-    assertEquals("/abc\n"
-        + "bar\n"
-        + "\n"
-        + "\n"
-        + "\n"
-        + "/xyz\n"
-        + "foo\n", out);
+    assertEquals(
+        """
+            /abc
+            bar
+            
+            
+            
+            /xyz
+            foo
+            """, out);
   }
 
 
@@ -43,15 +46,18 @@ class CompendiumUtilTest {
 
     CompendiumUtil.main(new String[]{"sort", path.toUri().toString()});
     String out = Files.readString(path);
-    assertEquals("/abc\n"
-        + "bar\n"
-        + "\n"
-        + "\n"
-        + "\n"
-        + "/xyz >> EOT\n"
-        + "foo\n"
-        + "/a/b/c\n"
-        + "EOT\n", out);
+    assertEquals(
+        """
+            /abc
+            bar
+            
+            
+            
+            /xyz >> EOT
+            foo
+            /a/b/c
+            EOT
+            """, out);
   }
 
 
@@ -63,16 +69,19 @@ class CompendiumUtilTest {
 
     CompendiumUtil.main(new String[]{"sort", path.toUri().toString()});
     String out = Files.readString(path);
-    assertEquals("/abc\n"
-        + "bar\n"
-        + "\n"
-        + "\n"
-        + "\n"
-        + "/xyz >> §§§\n"
-        + "foo\n"
-        + "/a/b/c\n"
-        + "EOT\n"
-        + "§§§\n", out);
+    assertEquals(
+        """
+            /abc
+            bar
+            
+            
+            
+            /xyz >> §§§
+            foo
+            /a/b/c
+            EOT
+            §§§
+            """, out);
   }
 
 
@@ -84,31 +93,37 @@ class CompendiumUtilTest {
 
     CompendiumUtil.main(new String[]{"sort", path.toUri().toString()});
     String out = Files.readString(path);
-    assertEquals("/abc\n"
-        + "bar\n"
-        + "\n"
-        + "\n"
-        + "\n"
-        + "/xyz >> §§§:0015:5921\n"
-        + "foo\n"
-        + "/a/b/c\n"
-        + "EOT\n"
-        + "§§§\n"
-        + "§§§:0015:5921\n", out);
+    assertEquals(
+        """
+            /abc
+            bar
+            
+            
+            
+            /xyz >> §§§:0015:5921
+            foo
+            /a/b/c
+            EOT
+            §§§
+            §§§:0015:5921
+            """, out);
 
     CompendiumUtil.main(new String[]{"sort", path.toUri().toString()});
     out = Files.readString(path);
-    assertEquals("/abc\n"
-        + "bar\n"
-        + "\n"
-        + "\n"
-        + "\n"
-        + "/xyz >> §§§:0015:5921\n"
-        + "foo\n"
-        + "/a/b/c\n"
-        + "EOT\n"
-        + "§§§\n"
-        + "§§§:0015:5921\n", out);
+    assertEquals(
+        """
+            /abc
+            bar
+            
+            
+            
+            /xyz >> §§§:0015:5921
+            foo
+            /a/b/c
+            EOT
+            §§§
+            §§§:0015:5921
+            """, out);
   }
 
 

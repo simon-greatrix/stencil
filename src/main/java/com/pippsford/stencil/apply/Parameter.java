@@ -2,7 +2,7 @@ package com.pippsford.stencil.apply;
 
 import java.math.BigDecimal;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import com.pippsford.common.TypeSafeMap;
 import com.pippsford.stencil.value.Data;

@@ -57,7 +57,7 @@ class DateTimeValue2Test {
     Map<String, Object> map = new HashMap<>();
     map.put("var", null);
     String output = stencils.write("test.txt", Locale.ENGLISH, ZoneId.of("Europe/London"), map);
-    assertEquals("DT = ", output);
+    assertEquals("DT = {var, datetime, short, short}", output);
   }
 
 }

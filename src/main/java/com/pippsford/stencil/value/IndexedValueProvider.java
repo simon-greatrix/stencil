@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.IntFunction;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * A value provider that allows access to a list. List's have a property for every index, plus "size" and "isEmpty".
@@ -72,11 +72,10 @@ public class IndexedValueProvider implements MutableValueProvider {
   }
 
 
-  @Nullable
   @Override
-  public Object get(@Nonnull String name) {
-    Object value = getLocal(name);
-    return (value != null) ? value : parent.get(name);
+  @Nonnull
+  public OptionalValue get(@Nonnull String name) {
+    return getLocal(parseInt(name), name).orDefault(() -> parent.get(name));
   }
 
 
@@ -87,41 +86,41 @@ public class IndexedValueProvider implements MutableValueProvider {
    *
    * @return the value
    */
-  public Object get(int index) {
+  public OptionalValue get(int index) {
     String name = Integer.toString(index);
-    Object r = otherValues.get(name);
-    if (r != null) {
-      return r;
-    }
-    try {
-      return getter.apply(index);
-    } catch (IndexOutOfBoundsException e) {
-      return parent.get(name);
-    }
+    return getLocal(index, name).orDefault(() -> parent.get(name));
   }
 
 
-  @Nullable
   @Override
-  public Object getLocal(@Nonnull String name) {
+  @Nonnull
+  public OptionalValue getLocal(@Nonnull String name) {
+    return getLocal(parseInt(name), name);
+  }
+
+
+  private OptionalValue getLocal(Integer index, @Nonnull String name) {
     Object other = otherValues.get(name);
     if (other != null) {
-      return other;
+      return OptionalValue.of(other);
     }
 
-    if (name.equals(P_SIZE)) {
-      return size();
+    if (index != null) {
+      if (0 <= index && index < size) {
+        return OptionalValue.of(getter.apply(index));
+      }
+    } else {
+      if (name.equals(P_SIZE)) {
+        return OptionalValue.of(size());
+      }
+
+      if (name.equals(P_IS_EMPTY)) {
+        return OptionalValue.of(size() == 0);
+      }
     }
-    if (name.equals(P_IS_EMPTY)) {
-      return size() == 0;
-    }
-    try {
-      int index = Integer.parseInt(name);
-      return getter.apply(index);
-    } catch (NumberFormatException | IndexOutOfBoundsException e) {
-      // nothing local
-      return null;
-    }
+
+    // nothing local
+    return OptionalValue.absent();
   }
 
 
@@ -157,8 +156,21 @@ public class IndexedValueProvider implements MutableValueProvider {
   }
 
 
+  private Integer parseInt(String name) {
+    try {
+      return Integer.parseInt(name);
+    } catch (NumberFormatException e) {
+      return null;
+    }
+  }
+
+
   @Override
-  public void put(@Nonnull String name, @Nullable Object newValue) {
+  public void put(@Nonnull String name, @Nonnull Object newValue) {
+    if (name.indexOf('.') != -1) {
+      throw new IllegalArgumentException("Property name must not contain a '.'");
+    }
+
     otherValues.put(name, newValue);
   }
 
@@ -192,6 +204,7 @@ public class IndexedValueProvider implements MutableValueProvider {
     if (visited.add(P_SIZE)) {
       visitor.accept(P_SIZE, s);
     }
+
     if (visited.add(P_IS_EMPTY)) {
       visitor.accept(P_IS_EMPTY, s == 0);
     }

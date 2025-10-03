@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * A value provider that enables mutation of another provider.
@@ -24,29 +24,24 @@ public class StandardMutableProvider implements MutableValueProvider {
    *
    * @param valueProvider the original values
    */
-  public StandardMutableProvider(ValueProvider valueProvider) {
+  public StandardMutableProvider(@Nonnull ValueProvider valueProvider) {
     values = valueProvider;
   }
 
 
-  @Nullable
   @Override
-  public Object get(@Nonnull String name) {
-    Object value = overrides.get(name);
-    if (value != null) {
-      return value;
-    }
-
-    return values.get(name);
+  @Nonnull
+  public OptionalValue get(@Nonnull String name) {
+    return getLocal(name).orDefault(() -> values.get(name));
   }
 
 
-  @Nullable
   @Override
-  public Object getLocal(@Nonnull String name) {
+  @Nonnull
+  public OptionalValue getLocal(@Nonnull String name) {
     Object value = overrides.get(name);
     if (value != null) {
-      return value;
+      return OptionalValue.of(value);
     }
 
     return values.getLocal(name);
@@ -54,7 +49,7 @@ public class StandardMutableProvider implements MutableValueProvider {
 
 
   @Override
-  public void put(@Nonnull String name, @Nullable Object newValue) {
+  public void put(@Nonnull String name, @Nonnull Object newValue) {
     if (name.indexOf('.') != -1) {
       throw new IllegalArgumentException("Property name must not contain a '.'");
     }

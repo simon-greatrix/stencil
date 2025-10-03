@@ -172,12 +172,7 @@ public class HTML {
     if (0xfdd0 <= c && c <= 0xfdef) {
       return true;
     }
-    if ((c == 0xfffe) || (c == 0xffff)) {
-      return true;
-    }
-
-    // it is a good character
-    return false;
+    return (c == 0xfffe) || (c == 0xffff);
   }
 
 

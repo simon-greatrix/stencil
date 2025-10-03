@@ -22,10 +22,10 @@ class IndexedValueProviderTest {
   void test1() {
     IndexedValueProvider valueProvider = new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, new int[]{1, 2, 3});
     assertEquals(3, valueProvider.size());
-    assertEquals(3, valueProvider.get("size"));
-    assertEquals(Boolean.FALSE, valueProvider.get("isEmpty"));
-    assertNull(valueProvider.get(56));
-    assertEquals(2, valueProvider.get("1"));
+    assertEquals(3, valueProvider.get("size").value());
+    assertEquals(Boolean.FALSE, valueProvider.get("isEmpty").value());
+    assertNull(valueProvider.get(56).value());
+    assertEquals(2, valueProvider.get("1").value());
   }
 
 
@@ -45,10 +45,10 @@ class IndexedValueProviderTest {
   void test2() {
     IndexedValueProvider valueProvider = new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, List.of("a", "b", "c", "d"));
     assertEquals(4, valueProvider.size());
-    assertEquals(4, valueProvider.get("size"));
-    assertEquals(Boolean.FALSE, valueProvider.get("isEmpty"));
-    assertNull(valueProvider.get(-23));
-    assertEquals("b", valueProvider.get("1"));
+    assertEquals(4, valueProvider.get("size").value());
+    assertEquals(Boolean.FALSE, valueProvider.get("isEmpty").value());
+    assertNull(valueProvider.get(-23).value());
+    assertEquals("b", valueProvider.get("1").value());
   }
 
 
@@ -58,12 +58,12 @@ class IndexedValueProviderTest {
     parent.put("0", "default");
     IndexedValueProvider valueProvider = new IndexedValueProvider(parent, new Float[0]);
     assertEquals(0, valueProvider.size());
-    assertEquals(0, valueProvider.get("size"));
-    assertEquals(Boolean.TRUE, valueProvider.get("isEmpty"));
-    assertEquals("default", valueProvider.get(0));
-    assertEquals("default", valueProvider.get("0"));
-    assertNull(valueProvider.get(1));
-    assertNull(valueProvider.get("1"));
+    assertEquals(0, valueProvider.get("size").value());
+    assertEquals(Boolean.TRUE, valueProvider.get("isEmpty").value());
+    assertEquals("default", valueProvider.get(0).value());
+    assertEquals("default", valueProvider.get("0").value());
+    assertNull(valueProvider.get(1).value());
+    assertNull(valueProvider.get("1").value());
   }
 
 
@@ -73,12 +73,12 @@ class IndexedValueProviderTest {
     parent.put("3", "default");
     IndexedValueProvider valueProvider = new IndexedValueProvider(parent, List.of());
     assertEquals(0, valueProvider.size());
-    assertEquals(0, valueProvider.get("size"));
-    assertEquals(Boolean.TRUE, valueProvider.get("isEmpty"));
-    assertNull(valueProvider.get(-23));
-    assertNull(valueProvider.get("0"));
-    assertEquals("default", valueProvider.get(3));
-    assertEquals("default", valueProvider.get("3"));
+    assertEquals(0, valueProvider.get("size").value());
+    assertEquals(Boolean.TRUE, valueProvider.get("isEmpty").value());
+    assertNull(valueProvider.get(-23).value());
+    assertNull(valueProvider.get("0").value());
+    assertEquals("default", valueProvider.get(3).value());
+    assertEquals("default", valueProvider.get("3").value());
   }
 
 
@@ -86,10 +86,10 @@ class IndexedValueProviderTest {
   void test5() {
     IndexedValueProvider valueProvider = new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, new TreeSet<>(Set.of("fish", "cat", "dog")));
     assertEquals(3, valueProvider.size());
-    assertEquals(3, valueProvider.get("size"));
-    assertNull(valueProvider.get(-23));
-    assertEquals("fish", valueProvider.get(2));
-    assertEquals("cat", valueProvider.get("0"));
+    assertEquals(3, valueProvider.get("size").value());
+    assertNull(valueProvider.get(-23).value());
+    assertEquals("fish", valueProvider.get(2).value());
+    assertEquals("cat", valueProvider.get("0").value());
   }
 
 
@@ -98,21 +98,21 @@ class IndexedValueProviderTest {
     IndexedValueProvider valueProvider =
         new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, new TreeMap<>(Map.of("fish", "salmon", "cat", "tiger", "dog", "woof")));
     assertEquals(3, valueProvider.size());
-    assertEquals(3, valueProvider.get("size"));
-    assertNull(valueProvider.get(-23));
-    assertEquals("fish=salmon", valueProvider.get(2).toString());
-    assertEquals("tiger", ValueAccessor.get(valueProvider, new String[]{"0", "value"}));
+    assertEquals(3, valueProvider.get("size").value());
+    assertNull(valueProvider.get(-23).value());
+    assertEquals("fish=salmon", valueProvider.get(2).value().toString());
+    assertEquals("tiger", ValueAccessor.get(valueProvider, new String[]{"0", "value"}).value());
   }
 
 
   @Test
   void test7() {
     IndexedValueProvider valueProvider = new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, List.of("a", "b", "c", "d"));
-    assertEquals("b", valueProvider.get(1));
-    assertEquals("b", valueProvider.get("1"));
+    assertEquals("b", valueProvider.get(1).value());
+    assertEquals("b", valueProvider.get("1").value());
     valueProvider.put("1", "thing");
-    assertEquals("thing", valueProvider.get(1));
-    assertEquals("thing", valueProvider.get("1"));
+    assertEquals("thing", valueProvider.get(1).value());
+    assertEquals("thing", valueProvider.get("1").value());
   }
 
 
@@ -128,7 +128,7 @@ class IndexedValueProviderTest {
 
     valueProvider.put("size", 87);
     assertEquals(5, valueProvider.size());
-    assertEquals(87, valueProvider.get("size"));
+    assertEquals(87, valueProvider.get("size").value());
     assertFalse(valueProvider.isPureList());
   }
 

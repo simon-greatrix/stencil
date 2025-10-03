@@ -60,7 +60,7 @@ class FormatValueTest {
     HashMap<String, Object> map = new HashMap<>();
     map.put("var1", null);
     String output = stencils.write("test.txt", Locale.ENGLISH, ZoneId.of("America/Los_Angeles"), map);
-    assertEquals("Columns: ||", output);
+    assertEquals("Columns: |  null|", output);
   }
 
 }

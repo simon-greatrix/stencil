@@ -28,27 +28,29 @@ public class Data {
   /**
    * Convert various raw data to more convenient forms.
    *
-   * @param raw the raw datum
+   * @param optRaw the raw datum
    *
    * @return the simplified form
    */
-  private static Object convertRaw(Object raw) {
+  private static OptionalValue convertRaw(OptionalValue optRaw) {
+    if( optRaw.isMissing() ) return optRaw;
+    Object raw = optRaw.value();
+
     // Return simple values quickly.
     if (raw == null || raw instanceof String || raw instanceof Number) {
-      return raw;
+      return optRaw;
     }
 
-    if (raw instanceof JsonValue) {
-      JsonValue value = (JsonValue) raw;
-      return JSON_ACCESSORS.get(value.getValueType()).apply(value);
+    if (raw instanceof JsonValue value) {
+      return OptionalValue.of(JSON_ACCESSORS.get(value.getValueType()).apply(value));
     }
 
-    if (raw instanceof AtomicBoolean) {
-      return ((AtomicBoolean) raw).get();
+    if (raw instanceof AtomicBoolean ab) {
+      return OptionalValue.of(ab.get());
     }
 
     // No conversion
-    return raw;
+    return optRaw;
   }
 
 
@@ -114,10 +116,10 @@ public class Data {
    *
    * @param name the value's name, which may contain periods ('.') as separators
    *
-   * @return the value, or null
+   * @return the value
    */
-  @Nullable
-  public Object get(@Nonnull String name) {
+  @Nonnull
+  public OptionalValue get(@Nonnull String name) {
     return convertRaw(getRaw(name));
   }
 
@@ -127,10 +129,10 @@ public class Data {
    *
    * @param key the separated keys
    *
-   * @return the value, or null
+   * @return the value
    */
-  @Nullable
-  public Object get(@Nonnull String[] key) {
+  @Nonnull
+  public OptionalValue get(@Nonnull String[] key) {
     return convertRaw(getRaw(key));
   }
 
@@ -153,7 +155,7 @@ public class Data {
    * @return the value, or null
    */
   @Nullable
-  public Object getRaw(@Nonnull String[] key) {
+  public OptionalValue getRaw(@Nonnull String[] key) {
     return ValueAccessor.get(provider, key);
   }
 
@@ -163,10 +165,10 @@ public class Data {
    *
    * @param name the value's name, which may contain periods ('.') as separators
    *
-   * @return the value, or null
+   * @return the value
    */
-  @Nullable
-  public Object getRaw(@Nonnull String name) {
+  @Nonnull
+  public OptionalValue getRaw(@Nonnull String name) {
     return get(ValueAccessor.toKey(name));
   }
 
@@ -177,7 +179,7 @@ public class Data {
    * @param name     the value's name, which may contain periods ('.') as separators
    * @param newValue the new value to associate with the name
    */
-  public void put(String name, Object newValue) {
+  public void put(@Nonnull String name, @Nonnull Object newValue) {
     put(ValueAccessor.toKey(name), newValue);
   }
 

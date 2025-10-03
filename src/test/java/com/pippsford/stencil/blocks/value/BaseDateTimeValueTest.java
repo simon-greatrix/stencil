@@ -53,7 +53,7 @@ class BaseDateTimeValueTest {
 
 
   @Test
-  public void testFormatError() throws StencilException {
+  public void testFormatError() {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "DT = {var, datetime, zoned}");
     Map<String, Object> map = Map.of("var", Collections.emptyList());
     assertThrows(IllegalArgumentException.class, () -> stencils.write("test.txt", Locale.ENGLISH, ZoneId.of("America/Los_Angeles"), map));
@@ -128,7 +128,7 @@ class BaseDateTimeValueTest {
     Map<String, Object> map = new HashMap<>();
     map.put("var", null);
     String output = stencils.write("test.txt", Locale.ENGLISH, ZoneId.of("America/Los_Angeles"), map);
-    assertEquals("DT = ", output);
+    assertEquals("DT = {var, datetime, zoned}", output);
   }
 
 

@@ -51,7 +51,7 @@ class StaticTest {
   public void test4() throws StencilException {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "\n\n[set escape=html_safe]\n\n[set bundle=bim]{var}\n\n");
     String output = stencils.write("test.txt", Locale.UK, ZoneId.of("Europe/London"), map);
-    assertEquals("\n\n", output);
+    assertEquals("{var}\n\n", output);
   }
 
 
@@ -59,7 +59,13 @@ class StaticTest {
   public void test5() throws StencilException {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "\n\n[set escape=java]\n {v} \n[set escape=no]{v}\n\n");
     String output = stencils.write("test.txt", Locale.UK, ZoneId.of("Europe/London"), map);
-    assertEquals("\n  \n\n\n", output);
+    assertEquals(
+        """
+            
+             {v}\s
+            {v}
+            
+            """, output);
   }
 
 
@@ -67,13 +73,13 @@ class StaticTest {
   public void test6() throws StencilException {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "\n\n[set escape=url]\n {>>x}   {x}\n[set bundle=bim]{v}\n\n");
     String output = stencils.write("test.txt", Locale.UK, ZoneId.of("Europe/London"), map);
-    assertEquals("\n +++\n\n\n", output);
+    assertEquals("\n +++\n%7Bv%7D\n\n", output);
   }
 
   @Test
   public void test7() throws StencilException {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "\n\n[set escape=url]\n {no: >>x}   {x}\n[set bundle=bim]{v}\n\n");
     String output = stencils.write("test.txt", Locale.UK, ZoneId.of("Europe/London"), map);
-    assertEquals("\n    \n\n\n", output);
+    assertEquals("\n    \n%7Bv%7D\n\n", output);
   }
 }

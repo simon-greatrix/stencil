@@ -6,5 +6,5 @@ public enum ProcessingMode {
   NORMAL,
 
   /** The inverted processing mode. Values and directives are active only within "here documents". */
-  INVERTED;
+  INVERTED
 }

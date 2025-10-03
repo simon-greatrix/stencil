@@ -30,22 +30,15 @@ public class IsFunction implements ValueProcessor {
     Parameter left = arguments[0];
     Parameter right = arguments[2];
 
-    switch (arguments[1].asString()) {
-      case "EQ":
-        return left.compareTo(right) == 0;
-      case "NE":
-        return left.compareTo(right) != 0;
-      case "LT":
-        return left.compareTo(right) < 0;
-      case "LE":
-        return left.compareTo(right) <= 0;
-      case "GT":
-        return left.compareTo(right) > 0;
-      case "GE":
-        return left.compareTo(right) >= 0;
-      default:
-        throw new IllegalArgumentException("Unrecognized operator: " + arguments[1].asString());
-    }
+    return switch (arguments[1].asString()) {
+      case "EQ" -> left.compareTo(right) == 0;
+      case "NE" -> left.compareTo(right) != 0;
+      case "LT" -> left.compareTo(right) < 0;
+      case "LE" -> left.compareTo(right) <= 0;
+      case "GT" -> left.compareTo(right) > 0;
+      case "GE" -> left.compareTo(right) >= 0;
+      default -> throw new IllegalArgumentException("Unrecognized operator: " + arguments[1].asString());
+    };
   }
 
 }

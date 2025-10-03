@@ -3,6 +3,9 @@ package com.pippsford.stencil.value;
 import java.util.Map;
 import java.util.Objects;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 /**
  * A value accessor that allows access along a path of references.
  *
@@ -19,19 +22,21 @@ public class ValueAccessor {
    *
    * @return the value
    */
-  public static Object get(ValueProvider provider, String[] names) {
+  @Nonnull
+  public static OptionalValue get(@Nonnull ValueProvider provider, @Nonnull String[] names) {
     return get(provider, names, 0);
   }
 
 
-  private static Object get(ValueProvider provider, String[] names, int index) {
-    Object value = provider.get(names[index]);
+  @Nonnull
+  private static OptionalValue get(ValueProvider provider, String[] names, int index) {
+    OptionalValue value = provider.get(names[index]);
     index++;
-    if (value == null || index == names.length) {
+    if (value.isMissing() || index == names.length) {
       return value;
     }
 
-    return get(makeProvider(provider, value), names, index);
+    return get(makeProvider(provider, value.value()), names, index);
   }
 
 
@@ -43,19 +48,21 @@ public class ValueAccessor {
    *
    * @return the value
    */
-  public static Object getLocal(ValueProvider provider, String[] names) {
+  @Nonnull
+  public static OptionalValue getLocal(@Nonnull ValueProvider provider, @Nonnull String[] names) {
     return getLocal(provider, names, 0);
   }
 
 
-  private static Object getLocal(ValueProvider provider, String[] names, int index) {
-    Object value = provider.getLocal(names[index]);
+  @Nonnull
+  private static OptionalValue getLocal(ValueProvider provider, String[] names, int index) {
+    OptionalValue value = provider.getLocal(names[index]);
     index++;
-    if (value == null || index == names.length) {
-      return value;
+    if (value.isMissing() || index == names.length) {
+      return OptionalValue.absent();
     }
 
-    return getLocal(makeProvider(provider, value), names, index);
+    return getLocal(makeProvider(provider, value.value()), names, index);
   }
 
 
@@ -66,7 +73,8 @@ public class ValueAccessor {
    *
    * @return a mutable wrapper on the provider, or the provider itself if it was mutable
    */
-  public static MutableValueProvider makeMutable(ValueProvider provider) {
+  @Nonnull
+  public static MutableValueProvider makeMutable(@Nonnull ValueProvider provider) {
     Objects.requireNonNull(provider);
     if (provider instanceof MutableValueProvider) {
       return (MutableValueProvider) provider;
@@ -83,7 +91,8 @@ public class ValueAccessor {
    *
    * @return the value provider
    */
-  public static ValueProvider makeProvider(ValueProvider parent, Object source) {
+  @Nonnull
+  public static ValueProvider makeProvider(@Nonnull ValueProvider parent, @Nullable Object source) {
     if (source == null) {
       return parent;
     }
@@ -113,14 +122,15 @@ public class ValueAccessor {
       return;
     }
 
-    Object next = provider.getLocal(key);
-    if (next == null) {
+    OptionalValue nextValue = provider.getLocal(key);
+    if (nextValue.isMissing()) {
       MutableMapValueProvider map = new MutableMapValueProvider(provider);
       provider.put(key, map);
       put(map, names, index, value);
       return;
     }
 
+    Object next = nextValue.value();
     if (!(next instanceof MutableValueProvider)) {
       // need to set as a mutable value provider
       next = makeMutable(makeProvider(provider, next));
@@ -138,7 +148,7 @@ public class ValueAccessor {
    * @param names    the key names
    * @param value    the value to put
    */
-  public static void put(MutableValueProvider provider, String[] names, Object value) {
+  public static void put(@Nonnull MutableValueProvider provider, @Nonnull String[] names, @Nonnull Object value) {
     put(provider, names, 0, value);
   }
 
@@ -150,8 +160,8 @@ public class ValueAccessor {
    * @param key      the key path
    * @param newValue the new value
    */
-  public static void putIfMissing(MutableValueProvider provider, String[] key, Object newValue) {
-    if (getLocal(provider, key) == null) {
+  public static void putIfMissing(@Nonnull MutableValueProvider provider, @Nonnull String[] key, @Nonnull Object newValue) {
+    if (getLocal(provider, key).isMissing()) {
       put(provider, key, newValue);
     }
   }
@@ -164,7 +174,7 @@ public class ValueAccessor {
    *
    * @return the array of keys
    */
-  public static String[] toKey(String param) {
+  public static String[] toKey(@Nonnull String param) {
     return param.split("\\.");
   }
 

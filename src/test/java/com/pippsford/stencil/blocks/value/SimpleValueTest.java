@@ -46,7 +46,7 @@ class SimpleValueTest {
 
 
   @Test
-  public void test11() throws StencilException {
+  public void test11() {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "[set escape=bad]DT = {html_strict:var}");
     Map<String, Object> map = Map.of("var", "&lt;b&gt;Hello, World!&lt;b&gt;");
     assertThrows(StencilParseFailedException.class, () -> stencils.write("test.txt", Locale.UK, ZoneId.of("Europe/London"), map));
@@ -63,7 +63,7 @@ class SimpleValueTest {
 
 
   @Test
-  public void test13() throws StencilException {
+  public void test13() {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "[set foo=bar]DT = {html_strict:var}");
     Map<String, Object> map = Map.of("var", "&lt;b&gt;Hello, World!&lt;b&gt;");
     assertThrows(StencilParseFailedException.class, () -> stencils.write("test.txt", Locale.UK, ZoneId.of("Europe/London"), map));
@@ -84,7 +84,7 @@ class SimpleValueTest {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "DT = { var}");
     Map<String, Object> map = Map.of();
     String output = stencils.write("test.txt", Locale.UK, ZoneId.of("Europe/London"), map);
-    assertEquals("DT = ", output);
+    assertEquals("DT = { var}", output);
   }
 
 
@@ -126,7 +126,7 @@ class SimpleValueTest {
 
 
   @Test
-  public void test8() throws StencilException {
+  public void test8() {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "DT = {foo:var}");
     Map<String, Object> map = Map.of("var", "&lt;b&gt;Hello, World!&lt;b&gt;");
     assertThrows(StencilParseFailedException.class, () -> stencils.write("test.txt", map));

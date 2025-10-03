@@ -26,6 +26,9 @@ public abstract class BaseValue implements Block {
    */
   protected final String[] param;
 
+  /** The template. */
+  protected final String template;
+
   /** The block type. */
   protected final BlockTypes type;
 
@@ -34,10 +37,12 @@ public abstract class BaseValue implements Block {
    * New instance.
    *
    * @param type        the block type
+   * @param template    the definition in the stencil
    * @param escapeStyle the escape style
    * @param param       the value's parameter key
    */
-  protected BaseValue(BlockTypes type, Escape escapeStyle, String param) {
+  protected BaseValue(BlockTypes type, String template, Escape escapeStyle, String param) {
+    this.template = template;
     this.escapeStyle = escapeStyle;
     this.param = ValueAccessor.toKey(param);
     this.type = type;

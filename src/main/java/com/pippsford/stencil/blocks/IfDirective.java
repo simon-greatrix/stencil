@@ -35,7 +35,7 @@ public class IfDirective extends Directive {
 
   @Override
   public void process(Writer writer, Locale locale, ZoneId zoneId, Data data) throws IOException, StencilException {
-    Object value = data.get(param);
+    Object value = data.get(param).value();
     boolean bool = TypeSafeMap.asBoolean(value);
     Template temp = bool ? main : other;
     temp.process(writer, locale, zoneId, data);

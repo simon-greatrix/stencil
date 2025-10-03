@@ -10,10 +10,9 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.pippsford.common.UncheckedCheckedException;
+import jakarta.annotation.Nonnull;
 
 /**
  * A value provider that allows access to a Java bean.
@@ -54,24 +53,22 @@ public class BeanValueProvider implements ValueProvider {
   }
 
 
-  @Nullable
   @Override
-  public Object get(@Nonnull String name) {
-    Method method = properties.get(name);
-    try {
-      return method != null && method.canAccess(bean) ? method.invoke(bean) : parent.get(name);
-    } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new UncheckedCheckedException(e);
-    }
+  @Nonnull
+  public OptionalValue get(@Nonnull String name) {
+    return getLocal(name).orDefault(() -> parent.get(name));
   }
 
 
-  @Nullable
   @Override
-  public Object getLocal(@Nonnull String name) {
+  @Nonnull
+  public OptionalValue getLocal(@Nonnull String name) {
     Method method = properties.get(name);
     try {
-      return method != null && method.canAccess(bean) ? method.invoke(bean) : null;
+      if (method != null && method.canAccess(bean)) {
+        return OptionalValue.of(method.invoke(bean));
+      }
+      return OptionalValue.absent();
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new UncheckedCheckedException(e);
     }
