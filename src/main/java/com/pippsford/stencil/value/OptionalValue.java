@@ -15,6 +15,11 @@ public record OptionalValue(Object value, boolean isPresent) {
   }
 
 
+  /**
+   * Test if the value is missing, as opposed to present.
+   *
+   * @return true if the value is not present
+   */
   public boolean isMissing() {
     return !isPresent;
   }
@@ -35,6 +40,13 @@ public record OptionalValue(Object value, boolean isPresent) {
   }
 
 
+  /**
+   * Get the value. Throws an exception if the value is missing.
+   *
+   * @return the value
+   *
+   * @throws IllegalStateException if the value is missing.
+   */
   public Object safeValue() {
     if (isMissing()) {
       throw new IllegalStateException("Value is missing");
