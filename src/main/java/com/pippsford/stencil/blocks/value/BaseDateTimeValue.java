@@ -20,7 +20,6 @@ import java.util.function.Function;
 import com.pippsford.stencil.blocks.BlockTypes;
 import com.pippsford.stencil.escape.Escape;
 import com.pippsford.stencil.value.Data;
-import com.pippsford.stencil.value.OptionalValue;
 import com.pippsford.util.CopyOnWriteMap;
 import jakarta.annotation.Nonnull;
 
@@ -111,7 +110,14 @@ class BaseDateTimeValue extends BaseValue {
    *
    * @param param parameter to render
    */
-  protected BaseDateTimeValue(BlockTypes type, String template, Escape escapeStyle, String param, String style, Function<FormatStyle, DateTimeFormatter> standardLocale) {
+  protected BaseDateTimeValue(
+      BlockTypes type,
+      String template,
+      Escape escapeStyle,
+      String param,
+      String style,
+      Function<FormatStyle, DateTimeFormatter> standardLocale
+  ) {
     super(type, template, escapeStyle, param);
     if (style == null) {
       formatterFunction = standardLocale.apply(FormatStyle.MEDIUM)::withLocale;
@@ -140,7 +146,7 @@ class BaseDateTimeValue extends BaseValue {
   @Override
   protected String getText(Locale locale, ZoneId zoneId, Data data) {
     Object msg = data.get(param).value();
-    if (msg==null) {
+    if (msg == null) {
       return template;
     }
 

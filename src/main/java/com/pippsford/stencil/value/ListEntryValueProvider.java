@@ -2,6 +2,7 @@ package com.pippsford.stencil.value;
 
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
+
 import jakarta.annotation.Nonnull;
 
 /**
@@ -11,6 +12,8 @@ import jakarta.annotation.Nonnull;
  */
 public class ListEntryValueProvider implements ValueProvider {
 
+  private final Entry<?, ?> entry;
+
   private final int index;
 
   private final ValueProvider parent;
@@ -19,7 +22,6 @@ public class ListEntryValueProvider implements ValueProvider {
 
   private final Object value;
 
-  private final Entry<?,?> entry;
 
   /**
    * New instance.
@@ -34,7 +36,7 @@ public class ListEntryValueProvider implements ValueProvider {
     this.index = index;
     this.size = size;
     this.value = value;
-    this.entry = value instanceof Entry<?,?> ? (Entry<?,?>) value : null;
+    this.entry = value instanceof Entry<?, ?> ? (Entry<?, ?>) value : null;
   }
 
 
@@ -60,7 +62,7 @@ public class ListEntryValueProvider implements ValueProvider {
 
   @Override
   public void visit(BiConsumer<String, Object> visitor) {
-    if (entry!=null) {
+    if (entry != null) {
       visitor.accept("key", entry.getKey());
       visitor.accept("value", entry.getValue());
     } else {

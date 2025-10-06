@@ -5,8 +5,11 @@ import java.util.function.Supplier;
 /** An optional value that can be null. */
 public record OptionalValue(Object value, boolean isPresent) {
 
+  private static final OptionalValue ABSENT = new OptionalValue(null, false);
+
+
   static OptionalValue absent() {
-    return new OptionalValue(null, false);
+    return ABSENT;
   }
 
 

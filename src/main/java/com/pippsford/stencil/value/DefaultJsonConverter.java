@@ -193,7 +193,7 @@ public class DefaultJsonConverter implements JsonConverter {
     JsonArrayBuilder builder = provider.createArrayBuilder();
     for (int i = 0; i < s; i++) {
       OptionalValue value = values.get(i);
-      if(value.isPresent()) {
+      if (value.isPresent()) {
         builder.add(convertAny(value.value()));
       }
     }

@@ -8,7 +8,6 @@ import java.util.Locale;
 import com.pippsford.stencil.blocks.BlockTypes;
 import com.pippsford.stencil.escape.Escape;
 import com.pippsford.stencil.value.Data;
-import com.pippsford.stencil.value.OptionalValue;
 import com.pippsford.util.CopyOnWriteMap;
 
 /**
@@ -53,7 +52,7 @@ public class DateTimeValue2 extends BaseValue {
   @Override
   protected String getText(Locale locale, ZoneId zoneId, Data data) {
     Object msg = data.get(param).value();
-    if (msg==null) {
+    if (msg == null) {
       return template;
     }
 

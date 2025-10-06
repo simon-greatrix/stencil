@@ -33,7 +33,10 @@ public class Data {
    * @return the simplified form
    */
   private static OptionalValue convertRaw(OptionalValue optRaw) {
-    if( optRaw.isMissing() ) return optRaw;
+    if (optRaw.isMissing()) {
+      return optRaw;
+    }
+
     Object raw = optRaw.value();
 
     // Return simple values quickly.
