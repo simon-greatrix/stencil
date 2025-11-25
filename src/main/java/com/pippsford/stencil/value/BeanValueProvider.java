@@ -19,14 +19,7 @@ import jakarta.annotation.Nonnull;
  *
  * @author Simon Greatrix on 03/01/2021.
  */
-public class BeanValueProvider implements ValueProvider {
-
-  private final Object bean;
-
-  private final ValueProvider parent;
-
-  private final Map<String, Method> properties = new HashMap<>();
-
+public class BeanValueProvider extends ReflectedValueProvider {
 
   /**
    * New instance.
@@ -35,7 +28,7 @@ public class BeanValueProvider implements ValueProvider {
    * @param bean   the bean to provide values from
    */
   public BeanValueProvider(ValueProvider parent, Object bean) {
-    this.parent = parent;
+    super(parent, bean);
     BeanInfo beanInfo;
     try {
       beanInfo = Introspector.getBeanInfo(bean.getClass());
@@ -49,50 +42,11 @@ public class BeanValueProvider implements ValueProvider {
         properties.put(descriptor.getName(), method);
       }
     }
-    this.bean = bean;
   }
-
 
   @Override
-  @Nonnull
-  public OptionalValue get(@Nonnull String name) {
-    return getLocal(name).orDefault(() -> parent.get(name));
+  protected boolean ignore(String name) {
+    // skip "class"
+    return "class".equals(name);
   }
-
-
-  @Override
-  @Nonnull
-  public OptionalValue getLocal(@Nonnull String name) {
-    Method method = properties.get(name);
-    try {
-      if (method != null && method.canAccess(bean)) {
-        return OptionalValue.of(method.invoke(bean));
-      }
-      return OptionalValue.absent();
-    } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new UncheckedCheckedException(e);
-    }
-  }
-
-
-  @Override
-  public void visit(BiConsumer<String, Object> visitor) {
-    for (var e : properties.entrySet()) {
-      // skip "class"
-      String key = e.getKey();
-      if ("class".equals(key)) {
-        continue;
-      }
-
-      Method method = e.getValue();
-      if (method.canAccess(bean)) {
-        try {
-          visitor.accept(key, method.invoke(bean));
-        } catch (IllegalAccessException | InvocationTargetException ex) {
-          visitor.accept(key, "<<< UNAVAILABLE : INTERNAL ERROR >>>");
-        }
-      }
-    }
-  }
-
 }
