@@ -96,9 +96,14 @@ public class ValueAccessor {
     if (source == null) {
       return parent;
     }
+
     if (source instanceof ValueProvider) {
       // Ignores parent
       return (ValueProvider) source;
+    }
+
+    if (source instanceof Record) {
+      return new RecordValueProvider(parent, (Record) source);
     }
 
     Class<?> sourceClass = source.getClass();
