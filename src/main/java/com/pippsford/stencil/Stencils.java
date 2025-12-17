@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.pippsford.stencil.apply.AugmentedIndex;
+import com.pippsford.stencil.apply.EntriesFunction;
 import com.pippsford.stencil.apply.ForFunction;
 import com.pippsford.stencil.apply.IsFunction;
 import com.pippsford.stencil.apply.StackTraceFunction;
@@ -37,7 +38,8 @@ public class Stencils {
       "index", AugmentedIndex.INSTANCE,
       "for", ForFunction.INSTANCE,
       "is", IsFunction.INSTANCE,
-      "stackTrace", StackTraceFunction.INSTANCE
+      "stackTrace", StackTraceFunction.INSTANCE,
+      "entries", EntriesFunction.INSTANCE
   );
 
   private final Map<String, Object> defaultValues = new CopyOnWriteMap<>();

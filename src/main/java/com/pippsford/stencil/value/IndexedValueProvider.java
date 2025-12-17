@@ -3,8 +3,10 @@ package com.pippsford.stencil.value;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -26,6 +28,12 @@ public class IndexedValueProvider implements MutableValueProvider {
 
   private static final Pattern INDEX = Pattern.compile("[1-9][0-9]*");
 
+
+  private static <T extends Comparable<T>> int compare(T a, T b) {
+    return a.compareTo(b);
+  }
+
+
   private final IntFunction<Object> getter;
 
   private final Map<String, Object> otherValues = new HashMap<>();
@@ -41,34 +49,53 @@ public class IndexedValueProvider implements MutableValueProvider {
    * @param parent the parent value provider
    * @param array  the list or array
    */
+  @SuppressWarnings("unchecked")
   public IndexedValueProvider(ValueProvider parent, Object array) {
     this.parent = parent;
-    if (array instanceof List<?>) {
-      getter = ((List<?>) array)::get;
-      size = ((List<?>) array).size();
-    } else if (array.getClass().isArray()) {
-      getter = i -> Array.get(array, i);
-      size = Array.getLength(array);
-    } else if (array instanceof Iterable<?>) {
-      ArrayList<Object> list = new ArrayList<>();
-      for (Object o : (Iterable<?>) array) {
-        list.add(o);
-      }
-      getter = list::get;
-      size = list.size();
-    } else if (array instanceof Map<?, ?>) {
-      ArrayList<Object> list = new ArrayList<>(((Map<?, ?>) array).entrySet());
-      getter = list::get;
-      size = list.size();
-    } else if (array instanceof Indexable) {
-      @SuppressWarnings("unchecked")
+
+    if (array instanceof Indexable) {
       Indexable<Object> indexable = (Indexable<Object>) array;
       getter = indexable;
       size = indexable.size();
+      return;
+    }
+
+    if (array instanceof List<?> list) {
+      getter = list::get;
+      size = list.size();
+      return;
+    }
+
+    if (array.getClass().isArray()) {
+      getter = i -> Array.get(array, i);
+      size = Array.getLength(array);
+      return;
+    }
+
+    Iterator<Object> iterator;
+
+    if (array instanceof Iterator<?>) {
+      iterator = (Iterator<Object>) array;
+
+    } else if (array instanceof Iterable<?> iterable) {
+      iterator = (Iterator<Object>) iterable.iterator();
+
+    } else if (array instanceof Enumeration<?> enumeration) {
+      iterator = (Iterator<Object>) enumeration.asIterator();
+
     } else {
+      // Final fallback - no idea how to loop over this
       getter = List.of(array)::get;
       size = 1;
+      return;
     }
+
+    ArrayList<Object> list = new ArrayList<>();
+    while (iterator.hasNext()) {
+      list.add(iterator.next());
+    }
+    getter = list::get;
+    size = list.size();
   }
 
 

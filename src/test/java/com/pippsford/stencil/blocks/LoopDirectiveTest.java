@@ -40,7 +40,7 @@ class LoopDirectiveTest {
   @Test
   public void test2() throws StencilException {
     sourceProvider.putFile(Locale.ROOT, "test.txt", "[loop p1]{index}: {value.title} {value.name} {value.age}[else]DETAILS MISSING[end]");
-    Map<String, Object> map = Map.of("p1", pojo1);
+    Map<String, Object> map = Map.of("p1", List.of(pojo1));
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map);
     assertEquals("0: Dr Karl 46", output);
   }
@@ -115,7 +115,7 @@ class LoopDirectiveTest {
 
   @Test
   public void test9() throws StencilException {
-    sourceProvider.putFile(Locale.ROOT, "test.txt", "[loop m.p1]{index}:{size}:{key}:{value}:{foo}\n[end]");
+    sourceProvider.putFile(Locale.ROOT, "test.txt", "[apply p_entries = F.entries(m.p1)][loop p_entries]{index}:{size}:{key}:{value}:{foo}\n[end]");
     Map<String, Object> map = Map.of("m", Map.of("p1", new TreeMap<>(Map.of("a", "b", "c", "d"))), "foo", "z");
     String output = stencils.write("test.txt", Locale.FRANCE, ZoneId.of("Europe/London"), map);
     assertEquals(

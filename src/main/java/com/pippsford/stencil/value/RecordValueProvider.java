@@ -9,6 +9,8 @@ import java.lang.reflect.RecordComponent;
  */
 public class RecordValueProvider extends ReflectedValueProvider {
 
+  private final boolean doesNotHaveClass;
+
   /**
    * New instance.
    *
@@ -22,13 +24,20 @@ public class RecordValueProvider extends ReflectedValueProvider {
     for (RecordComponent component : components) {
       properties.put(component.getName(), component.getAccessor());
     }
-    if (!properties.containsKey("class")) {
+    doesNotHaveClass = !properties.containsKey("class");
+    if (doesNotHaveClass) {
       try {
         properties.put("class", bean.getClass().getMethod("getClass"));
       } catch (NoSuchMethodException e) {
         throw new InternalError("The getClass() method is missing from " + bean.getClass());
       }
     }
+  }
+
+
+  @Override
+  protected boolean ignore(String name) {
+    return doesNotHaveClass && "class".equals(name);
   }
 
 }

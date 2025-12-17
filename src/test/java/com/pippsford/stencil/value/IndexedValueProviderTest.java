@@ -7,10 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.pippsford.stencil.apply.EntriesFunction;
+import com.pippsford.stencil.blocks.Pojo;
+import com.pippsford.stencil.value.RecordValueProviderTest.PoRec;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -19,7 +23,7 @@ import org.junit.jupiter.api.Test;
 class IndexedValueProviderTest {
 
   @Test
-  void test1() {
+  public void intArray() {
     IndexedValueProvider valueProvider = new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, new int[]{1, 2, 3});
     assertEquals(3, valueProvider.size());
     assertEquals(3, valueProvider.get("size").value());
@@ -30,19 +34,29 @@ class IndexedValueProviderTest {
 
 
   @Test
-  public void test10() {
+  public void list() {
     IndexedValueProvider valueProvider = new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, List.of("a", "b", "c", "d"));
     Data data = new Data(valueProvider);
-    assertEquals("[\"a\",\"b\",\"c\",\"d\"]", data.toJson().toString());
+    assertEquals(
+        """
+            ["a","b","c","d"]""", data.toJson().toString());
 
     valueProvider.put("a", "b");
     data = new Data(valueProvider);
-    assertEquals("{\"0\":\"a\",\"1\":\"b\",\"2\":\"c\",\"3\":\"d\",\"a\":\"b\",\"isEmpty\":false,\"size\":4}", data.toJson().toString());
+    assertEquals(
+        """
+            {"0":"a","1":"b","2":"c","3":"d","a":"b","isEmpty":false,"size":4}""", data.toJson().toString());
+  }
+
+  @Test
+  public void singleValue() {
+    IndexedValueProvider valueProvider = new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, 17);
+    assertEquals(1, valueProvider.size());
   }
 
 
   @Test
-  void test2() {
+  public void list2() {
     IndexedValueProvider valueProvider = new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, List.of("a", "b", "c", "d"));
     assertEquals(4, valueProvider.size());
     assertEquals(4, valueProvider.get("size").value());
@@ -93,16 +107,6 @@ class IndexedValueProviderTest {
   }
 
 
-  @Test
-  void test6() {
-    IndexedValueProvider valueProvider =
-        new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, new TreeMap<>(Map.of("fish", "salmon", "cat", "tiger", "dog", "woof")));
-    assertEquals(3, valueProvider.size());
-    assertEquals(3, valueProvider.get("size").value());
-    assertNull(valueProvider.get(-23).value());
-    assertEquals("fish=salmon", valueProvider.get(2).value().toString());
-    assertEquals("tiger", ValueAccessor.get(valueProvider, new String[]{"0", "value"}).value());
-  }
 
 
   @Test

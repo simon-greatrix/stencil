@@ -44,7 +44,7 @@ public class LoopDirective extends Directive {
       return;
     }
 
-    // There is some data. The expectation is for an IndexedValueProvider
+    // There is some data. Create an IndexedValueProvider to loop over it
     ValueProvider parentProvider = data.getProvider();
     IndexedValueProvider indexed = new IndexedValueProvider(parentProvider, value);
     int size = indexed.size();
