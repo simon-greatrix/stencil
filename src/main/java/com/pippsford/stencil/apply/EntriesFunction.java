@@ -103,7 +103,11 @@ public class EntriesFunction implements ValueProcessor {
     // Convert as a bean/record
     ValueProvider provider = ValueAccessor.makeProvider(data.getProvider(), value);
     ArrayList<Map.Entry<String, Object>> list = new ArrayList<>();
-    provider.visit((k, v) -> list.add(new SimpleEntry<>(k, v)));
+    provider.visit((k, v, s) -> {
+      if (s) {
+        list.add(new SimpleEntry<>(k, v));
+      }
+    });
     return list;
   }
 

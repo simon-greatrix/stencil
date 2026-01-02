@@ -45,7 +45,7 @@ class IndexedValueProviderTest {
     data = new Data(valueProvider);
     assertEquals(
         """
-            {"0":"a","1":"b","2":"c","3":"d","a":"b","isEmpty":false,"size":4}""", data.toJson().toString());
+            {"0":"a","1":"b","2":"c","3":"d","a":"b"}""", data.toJson().toString());
   }
 
   @Test
@@ -144,4 +144,11 @@ class IndexedValueProviderTest {
     assertFalse(valueProvider.isPureList());
   }
 
+  @Test
+  public void test10() {
+    IndexedValueProvider valueProvider = new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, List.of());
+    assertTrue(valueProvider.isPureList());
+    valueProvider.put("0",87);
+    assertTrue(valueProvider.isPureList());
+  }
 }

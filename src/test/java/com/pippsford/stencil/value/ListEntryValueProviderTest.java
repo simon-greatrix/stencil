@@ -33,11 +33,15 @@ class ListEntryValueProviderTest {
   @Test
   void visit() {
     Map<String, Object> map = new HashMap<>();
-    e.visit(map::put);
+    e.visit((k, v, r) -> {
+      map.put(k, v);
+    });
     assertEquals(Map.of("index", 1, "size", 5, "key", "x", "value", "y"), map);
-
     map.clear();
-    p.visit(map::put);
+
+    p.visit((k, v, r) -> {
+      map.put(k, v);
+    });
     assertEquals(Map.of("index", 1, "size", 5, "value", "hello"), map);
   }
 

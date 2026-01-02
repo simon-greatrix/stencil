@@ -1,8 +1,10 @@
 package com.pippsford.stencil.value;
 
+import static com.pippsford.stencil.value.IndexedValueProvider.P_IS_EMPTY;
+import static com.pippsford.stencil.value.IndexedValueProvider.P_SIZE;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 import jakarta.annotation.Nonnull;
 
@@ -53,12 +55,18 @@ public class MutableMapValueProvider implements MutableValueProvider {
 
 
   @Override
-  public void visit(BiConsumer<String, Object> visitor) {
+  public void visit(ValueVisitor visitor) {
     map.forEach((k, v) -> {
       if (k != null) {
-        visitor.accept(k, v);
+        visitor.visit(k, v, true);
       }
     });
+    if (!map.containsKey(P_IS_EMPTY)) {
+      visitor.visit(P_IS_EMPTY, map.isEmpty(), false);
+    }
+    if (!map.containsKey(P_SIZE)) {
+      visitor.visit(P_SIZE, map.size(), false);
+    }
   }
 
 }

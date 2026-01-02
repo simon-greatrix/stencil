@@ -73,7 +73,7 @@ public class ReflectedValueProvider implements ValueProvider {
 
 
   @Override
-  public void visit(BiConsumer<String, Object> visitor) {
+  public void visit(ValueVisitor visitor) {
     for (var e : properties.entrySet()) {
       String key = e.getKey();
       if (ignore(key)) {
@@ -83,9 +83,9 @@ public class ReflectedValueProvider implements ValueProvider {
       Method method = e.getValue();
       if (method.canAccess(bean)) {
         try {
-          visitor.accept(key, method.invoke(bean));
+          visitor.visit(key, method.invoke(bean), true);
         } catch (IllegalAccessException | InvocationTargetException ex) {
-          visitor.accept(key, "<<< UNAVAILABLE : INTERNAL ERROR >>>");
+          visitor.visit(key, "<<< UNAVAILABLE : INTERNAL ERROR >>>", false);
         }
       }
     }

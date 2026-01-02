@@ -79,11 +79,9 @@ class DataTest {
         """
             {
               "age": 45,
-              "error": "<<< UNAVAILABLE : INTERNAL ERROR >>>",
               "name": "Karl",
               "other": {
                 "age": 13,
-                "error": "<<< UNAVAILABLE : INTERNAL ERROR >>>",
                 "name": "Bartholomew",
                 "other": null,
                 "properties": {
@@ -92,19 +90,12 @@ class DataTest {
                       "c": { "d": "value" }
                     }
                   },
-                  "isEmpty": true,
-                  "l": [ "a", "b", "c" ],
-                  "size": 0
+                  "l": [ "a", "b", "c" ]
                 },
                 "qualifications": null,
                 "title": "Mr"
               },
-              "properties": {
-                "a": [],
-                "c": "",
-                "isEmpty": false,
-                "size": 2
-              },
+              "properties": { "a": [], "c": "" },
               "qualifications": null,
               "title": "Dr"
             }""", json);

@@ -10,6 +10,19 @@ import com.pippsford.stencil.value.Data;
 @FunctionalInterface
 public interface ValueProcessor {
 
+  static void verifyArity(Parameter[] arguments, int min, int max) {
+    if (min <= arguments.length && arguments.length <= max) {
+      return;
+    }
+    if (min == max) {
+      throw new IllegalArgumentException("Must provide exactly " + min + " arguments to this function");
+    }
+    if (arguments.length < min) {
+      throw new IllegalArgumentException("Must provide at least " + min + " arguments");
+    }
+    throw new IllegalArgumentException("Must provide at most " + max + " arguments");
+  }
+
   /**
    * Apply the process.
    *

@@ -16,6 +16,6 @@ public interface JsonConverter {
    *
    * @return the equivalent JSON
    */
-  JsonValue toValue(Object object);
+  JsonValue toValue(ValueProvider object);
 
 }

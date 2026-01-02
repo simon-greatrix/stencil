@@ -3,12 +3,13 @@ package com.pippsford.stencil.value;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+
 import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
-
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,22 +29,30 @@ public class DefaultJsonConverterTest {
   @Test
   public void test() {
     JsonProvider p = JsonProvider.provider();
-    assertEquals(JsonValue.NULL, converter.toValue(null));
-    assertEquals(JsonValue.FALSE, converter.toValue(false));
-    assertEquals(JsonValue.FALSE, converter.toValue(new AtomicBoolean(false)));
-    assertEquals(JsonValue.TRUE, converter.toValue(true));
-    assertEquals(JsonValue.TRUE, converter.toValue(new AtomicBoolean(true)));
-    assertEquals(p.createValue("test"), converter.toValue("test"));
-    assertEquals(p.createValue(123), converter.toValue(123));
-    assertEquals(p.createValue(123L), converter.toValue(new AtomicLong(123)));
-    assertEquals(JsonValue.EMPTY_JSON_ARRAY, converter.toValue(List.of()));
-    assertEquals(JsonValue.EMPTY_JSON_ARRAY, converter.toValue(JsonValue.EMPTY_JSON_ARRAY));
-    assertEquals(p.createValue(5.46), converter.toValue(5.46));
-
-    // check recursion
-    Object[] b = { "a", null };
+    Object[] b = {"a", null};
     b[1] = b;
-    assertEquals(p.createArrayBuilder().add("a").add("\uaa5c").build(), converter.toValue(b));
+
+    List<Object> list = new ArrayList<>(
+        List.of(
+            false,
+            new AtomicBoolean(false),
+            true,
+            new AtomicBoolean(true),
+            "test",
+            123,
+            new AtomicLong(123),
+            List.of(4,5,'A'),
+            JsonValue.EMPTY_JSON_ARRAY,
+            5.46d,
+            b
+        ));
+    list.add(null);
+
+    assertEquals(
+        """
+            [false,false,true,true,"test",123,123,[4,5,"A"],[],5.46E0,["a","꩜"],null]""",
+        converter.toValue(new IndexedValueProvider(ValueProvider.NULL_VALUE_PROVIDER, list)).toString()
+    );
 
   }
 

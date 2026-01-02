@@ -23,7 +23,9 @@ public class StackTraceFunction implements ValueProcessor {
 
   @Override
   public Object apply(Data valueProvider, Parameter[] arguments) {
-    Object value = (arguments.length > 0) ? arguments[0].getValue() : valueProvider.get("$.cause");
+    ValueProcessor.verifyArity(arguments, 0, 1);
+
+    Object value = (arguments.length > 0) ? arguments[0].getValue() : valueProvider.get("cause");
     if (value == null) {
       return "(No causative exception specified)";
     }

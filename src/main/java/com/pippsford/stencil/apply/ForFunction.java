@@ -21,9 +21,8 @@ public class ForFunction implements ValueProcessor {
 
   @Override
   public Object apply(Data valueProvider, Parameter[] arguments) {
-    if (arguments.length == 0 || arguments.length > 3) {
-      throw new IllegalArgumentException("Must provide one, two or three arguments to this function");
-    }
+    ValueProcessor.verifyArity(arguments, 1, 3);
+
     int start = (arguments.length == 1) ? 0 : arguments[0].asNumber().intValueExact();
     int end = arguments[arguments.length == 1 ? 0 : 1].asNumber().intValueExact();
     int step = (arguments.length == 3) ? arguments[2].asNumber().intValueExact() : 1;

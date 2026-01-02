@@ -3,7 +3,6 @@ package com.pippsford.stencil.value;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 import jakarta.annotation.Nonnull;
 
@@ -58,18 +57,18 @@ public class StandardMutableProvider implements MutableValueProvider {
 
 
   @Override
-  public void visit(BiConsumer<String, Object> visitor) {
+  public void visit(ValueVisitor visitor) {
     final HashSet<String> visited = new HashSet<>();
     for (var e : overrides.entrySet()) {
       String key = e.getKey();
       Object value = e.getValue();
       visited.add(key);
-      visitor.accept(key, value);
+      visitor.visit(key, value, true);
     }
 
-    values.visit((k, v) -> {
+    values.visit((k, v, r) -> {
       if (visited.add(k)) {
-        visitor.accept(k, v);
+        visitor.visit(k, v, r);
       }
     });
   }

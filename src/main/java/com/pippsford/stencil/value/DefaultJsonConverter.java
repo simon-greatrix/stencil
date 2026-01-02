@@ -45,6 +45,26 @@ public class DefaultJsonConverter implements JsonConverter {
   );
 
 
+
+  /** Conversion state. */
+  protected static class State {
+
+    protected final int maxDepth;
+
+    /** Set of processed vales. */
+    protected final IdentityHashSet processed = new IdentityHashSet();
+
+    /** Current conversion depth. */
+    protected int depth;
+
+
+    public State(int maxDepth) {
+      this.maxDepth = maxDepth;
+    }
+
+  }
+
+
   /**
    * Check if an object should not be JSON expanded.
    *
@@ -89,10 +109,6 @@ public class DefaultJsonConverter implements JsonConverter {
   /** The JSON provider used to create JSON values. */
   protected final JsonProvider provider;
 
-  private final IdentityHashSet processed = new IdentityHashSet();
-
-  private int depth;
-
   private int maxDepth = 10;
 
 
@@ -119,7 +135,7 @@ public class DefaultJsonConverter implements JsonConverter {
    *
    * @return the JsonValue that corresponds to the object
    */
-  protected JsonValue convertAny(Object object) {
+  protected JsonValue convertAny(State state, Object object) {
     for (BiFunction<JsonProvider, Object, JsonValue> converter : CONVERTERS) {
       JsonValue value = converter.apply(provider, object);
       if (value != null) {
@@ -127,26 +143,26 @@ public class DefaultJsonConverter implements JsonConverter {
       }
     }
 
-    if (!processed.add(object)) {
+    if (!state.processed.add(object)) {
       return provider.createValue("꩜");
     }
 
-    depth++;
+    state.depth++;
     try {
-      if (depth >= maxDepth) {
+      if (state.depth >= state.maxDepth) {
         return provider.createValue("⋯");
       }
 
       ValueProvider provider = ValueAccessor.makeProvider(ValueProvider.NULL_VALUE_PROVIDER, object);
       if (provider instanceof IndexedValueProvider p) {
         if (p.isPureList()) {
-          return toArray(p);
+          return toArray(state, p);
         }
         // Not a pure list, so process as an object
       }
-      return toObject(provider);
+      return toObject(state, provider);
     } finally {
-      depth--;
+      state.depth--;
     }
   }
 
@@ -188,13 +204,15 @@ public class DefaultJsonConverter implements JsonConverter {
    *
    * @return the JSON representation
    */
-  protected JsonArray toArray(IndexedValueProvider values) {
+  protected JsonArray toArray(State state, IndexedValueProvider values) {
     int s = values.size();
     JsonArrayBuilder builder = provider.createArrayBuilder();
+    // As the input should be a pure list, all indices should be present.
     for (int i = 0; i < s; i++) {
       OptionalValue value = values.get(i);
       if (value.isPresent()) {
-        builder.add(convertAny(value.value()));
+        // Should always be true
+        builder.add(convertAny(state, value.value()));
       }
     }
     return builder.build();
@@ -208,18 +226,20 @@ public class DefaultJsonConverter implements JsonConverter {
    *
    * @return a JSON object holding the values
    */
-  protected JsonObject toObject(ValueProvider values) {
+  protected JsonObject toObject(State state, ValueProvider values) {
     JsonObjectBuilder builder = provider.createObjectBuilder();
-    values.visit((k, v) -> builder.add(k, convertAny(v)));
+    values.visit((k, v, r) -> {
+      if (r) {
+        builder.add(k, convertAny(state, v));
+      }
+    });
     return builder.build();
   }
 
 
   @Override
-  public JsonValue toValue(Object object) {
-    processed.clear();
-    depth = 0;
-    return convertAny(object);
+  public JsonValue toValue(ValueProvider object) {
+    return convertAny(new State(maxDepth), object);
   }
 
 }

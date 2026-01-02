@@ -12,6 +12,7 @@ import com.pippsford.stencil.apply.AugmentedIndex;
 import com.pippsford.stencil.apply.EntriesFunction;
 import com.pippsford.stencil.apply.ForFunction;
 import com.pippsford.stencil.apply.IsFunction;
+import com.pippsford.stencil.apply.JsonFunction;
 import com.pippsford.stencil.apply.StackTraceFunction;
 import com.pippsford.stencil.apply.ValueProcessor;
 import com.pippsford.stencil.blocks.Template;
@@ -36,6 +37,7 @@ public class Stencils {
 
   private static final Map<String, ValueProcessor> STANDARD_FUNCTIONS = Map.of(
       "index", AugmentedIndex.INSTANCE,
+      "json", JsonFunction.INSTANCE,
       "for", ForFunction.INSTANCE,
       "is", IsFunction.INSTANCE,
       "stackTrace", StackTraceFunction.INSTANCE,

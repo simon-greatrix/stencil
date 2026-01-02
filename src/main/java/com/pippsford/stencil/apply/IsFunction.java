@@ -20,9 +20,8 @@ public class IsFunction implements ValueProcessor {
 
   @Override
   public Object apply(Data valueProvider, Parameter[] arguments) {
-    if (arguments.length != 3) {
-      throw new IllegalArgumentException("Must provide exactly three arguments to this function");
-    }
+    ValueProcessor.verifyArity(arguments, 3, 3);
+
     if (arguments[1].isNull()) {
       throw new IllegalArgumentException("No comparison operator specified");
     }

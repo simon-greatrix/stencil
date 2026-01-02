@@ -26,7 +26,7 @@ public class IndexedValueProvider implements MutableValueProvider {
 
   static final String P_SIZE = "size";
 
-  private static final Pattern INDEX = Pattern.compile("[1-9][0-9]*");
+  private static final Pattern INDEX = Pattern.compile("[0-9]+");
 
 
   private static <T extends Comparable<T>> int compare(T a, T b) {
@@ -219,27 +219,27 @@ public class IndexedValueProvider implements MutableValueProvider {
 
 
   @Override
-  public void visit(BiConsumer<String, Object> visitor) {
+  public void visit(ValueVisitor visitor) {
     final HashSet<String> visited = new HashSet<>();
     for (var e : otherValues.entrySet()) {
       String key = e.getKey();
       visited.add(key);
-      visitor.accept(key, e.getValue());
+      visitor.visit(key, e.getValue(), true);
     }
 
     int s = size();
     if (visited.add(P_SIZE)) {
-      visitor.accept(P_SIZE, s);
+      visitor.visit(P_SIZE, s, false);
     }
 
     if (visited.add(P_IS_EMPTY)) {
-      visitor.accept(P_IS_EMPTY, s == 0);
+      visitor.visit(P_IS_EMPTY, s == 0, false);
     }
 
     for (int i = 0; i < size; i++) {
       String k = Integer.toString(i);
       if (visited.add(k)) {
-        visitor.accept(k, getter.apply(i));
+        visitor.visit(k, getter.apply(i), true);
       }
     }
   }

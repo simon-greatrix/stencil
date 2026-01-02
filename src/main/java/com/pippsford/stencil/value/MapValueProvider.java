@@ -4,10 +4,9 @@ import static com.pippsford.stencil.value.IndexedValueProvider.P_IS_EMPTY;
 import static com.pippsford.stencil.value.IndexedValueProvider.P_SIZE;
 
 import java.util.Map;
-import java.util.function.BiConsumer;
-import jakarta.annotation.Nonnull;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jakarta.annotation.Nonnull;
 
 /**
  * A value provider backed by a map.
@@ -59,17 +58,17 @@ public class MapValueProvider implements ValueProvider {
 
 
   @Override
-  public void visit(BiConsumer<String, Object> visitor) {
+  public void visit(ValueVisitor visitor) {
     map.forEach((k, v) -> {
       if (k instanceof String) {
-        visitor.accept((String) k, v);
+        visitor.visit((String) k, v, true);
       }
     });
     if (!map.containsKey(P_IS_EMPTY)) {
-      visitor.accept(P_IS_EMPTY, map.isEmpty());
+      visitor.visit(P_IS_EMPTY, map.isEmpty(), false);
     }
     if (!map.containsKey(P_SIZE)) {
-      visitor.accept(P_SIZE, map.size());
+      visitor.visit(P_SIZE, map.size(), false);
     }
   }
 

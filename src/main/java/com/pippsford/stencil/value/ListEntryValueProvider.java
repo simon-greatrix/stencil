@@ -61,16 +61,16 @@ public class ListEntryValueProvider implements ValueProvider {
 
 
   @Override
-  public void visit(BiConsumer<String, Object> visitor) {
+  public void visit(ValueVisitor visitor) {
     if (entry != null) {
-      visitor.accept("key", entry.getKey());
-      visitor.accept("value", entry.getValue());
+      visitor.visit("key", entry.getKey(), true);
+      visitor.visit("value", entry.getValue(), true);
     } else {
-      visitor.accept("value", value);
+      visitor.visit("value", value, true);
     }
 
-    visitor.accept("index", index);
-    visitor.accept("size", size);
+    visitor.visit("index", index, false);
+    visitor.visit("size", size, false);
   }
 
 }

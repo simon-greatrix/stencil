@@ -8,7 +8,6 @@ import java.util.function.Function;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonString;
 import jakarta.json.JsonStructure;
@@ -157,7 +156,7 @@ public class Data {
    *
    * @return the value, or null
    */
-  @Nullable
+  @Nonnull
   public OptionalValue getRaw(@Nonnull String[] key) {
     return ValueAccessor.get(provider, key);
   }

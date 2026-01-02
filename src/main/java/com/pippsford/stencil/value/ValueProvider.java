@@ -1,6 +1,5 @@
 package com.pippsford.stencil.value;
 
-import java.util.function.BiConsumer;
 import jakarta.annotation.Nonnull;
 
 /**
@@ -27,7 +26,7 @@ public interface ValueProvider {
 
 
     @Override
-    public void visit(BiConsumer<String, Object> visitor) {
+    public void visit(ValueVisitor visitor) {
       // do nothing
     }
   };
@@ -60,6 +59,6 @@ public interface ValueProvider {
    *
    * @param visitor visitor
    */
-  void visit(BiConsumer<String, Object> visitor);
+  void visit(ValueVisitor visitor);
 
 }
