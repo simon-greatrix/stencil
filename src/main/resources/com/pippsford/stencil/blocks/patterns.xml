@@ -106,7 +106,7 @@
 
 
   <!-- A comment, styled after the common symbols-star pattern -->
-  <!-- [* this is a comment *] -->
+  <!-- {* this is a comment *} -->
   <entry key="VALUE_COMMENT">
     \{ \s*
     \* .*? \*

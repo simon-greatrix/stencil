@@ -5,6 +5,9 @@ import com.pippsford.stencil.value.JsonConverter;
 import com.pippsford.stencil.value.ValueAccessor;
 import jakarta.json.JsonValue;
 
+/**
+ * A function that converts a value into a JSON representation.
+ */
 public class JsonFunction implements ValueProcessor {
 
   /** Singleton instance of this function. */

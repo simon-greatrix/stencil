@@ -49,6 +49,7 @@ public class DefaultJsonConverter implements JsonConverter {
   /** Conversion state. */
   protected static class State {
 
+    /** The maximum depth that will be expanded. */
     protected final int maxDepth;
 
     /** Set of processed vales. */
@@ -58,6 +59,11 @@ public class DefaultJsonConverter implements JsonConverter {
     protected int depth;
 
 
+    /**
+     * New instance with the configured maximum expansion depth.
+     *
+     * @param maxDepth the maximum expansion depth.
+     */
     public State(int maxDepth) {
       this.maxDepth = maxDepth;
     }
@@ -131,6 +137,7 @@ public class DefaultJsonConverter implements JsonConverter {
   /**
    * Convert any object to a JSON object.
    *
+   * @param state  the current conversion state
    * @param object the object to convert
    *
    * @return the JsonValue that corresponds to the object
@@ -200,6 +207,7 @@ public class DefaultJsonConverter implements JsonConverter {
   /**
    * Convert an indexed value to a JSON array.
    *
+   * @param state  the current conversion state
    * @param values the collection of values
    *
    * @return the JSON representation
@@ -222,6 +230,7 @@ public class DefaultJsonConverter implements JsonConverter {
   /**
    * Convert a value to a JSON object.
    *
+   * @param state  the current conversion state
    * @param values the values to convert
    *
    * @return a JSON object holding the values

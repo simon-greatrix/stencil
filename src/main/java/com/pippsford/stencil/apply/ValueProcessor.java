@@ -10,6 +10,13 @@ import com.pippsford.stencil.value.Data;
 @FunctionalInterface
 public interface ValueProcessor {
 
+  /**
+   * Verify the arity of a function's input parameters and throw an {@code IllegalArgumentException} if the wrong number of arguments are specified.
+   *
+   * @param arguments the argument array
+   * @param min       the minimum number of arguments allowed
+   * @param max       the maximum number of arguments allowed
+   */
   static void verifyArity(Parameter[] arguments, int min, int max) {
     if (min <= arguments.length && arguments.length <= max) {
       return;
