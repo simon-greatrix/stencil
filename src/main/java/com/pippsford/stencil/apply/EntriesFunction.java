@@ -19,8 +19,130 @@ import com.pippsford.stencil.value.ValueProvider;
  */
 public class EntriesFunction implements ValueProcessor {
 
+  /**
+   * Handlers to convert input into entry collections.
+   */
+  private static final List<EntriesHandler> HANDLERS = List.of(
+      // Handle nulls
+      new EntriesHandler() {
+        @Override
+        public boolean canHandle(Object value) {
+          return value == null;
+        }
+
+
+        @Override
+        public Object handle(Object object) {
+          return null;
+        }
+      },
+
+      // Handle maps
+      new EntriesHandler() {
+        @Override
+        public boolean canHandle(Object value) {
+          return value instanceof Map<?, ?>;
+        }
+
+
+        @Override
+        public Object handle(Object value) {
+          Map<?, ?> map = (Map<?, ?>) value;
+          ArrayList<Map.Entry<?, ?>> list = new ArrayList<>(map.entrySet());
+          list.sort(Comparator.comparing(e -> String.valueOf(e.getKey())));
+          return list;
+        }
+      },
+
+      // Handle anything iterable
+      new EntriesHandler() {
+        @Override
+        public boolean canHandle(Object value) {
+          return value instanceof Iterable<?>;
+        }
+
+
+        @Override
+        public Object handle(Object value) {
+          return collect(((Iterable<?>) value).iterator());
+        }
+      },
+
+      // Explicit iterators
+      new EntriesHandler() {
+        @Override
+        public boolean canHandle(Object value) {
+          return value instanceof Iterator<?>;
+        }
+
+
+        @Override
+        public Object handle(Object value) {
+          return collect((Iterator<?>) value);
+        }
+      },
+
+      // Enumerators
+      new EntriesHandler() {
+        @Override
+        public boolean canHandle(Object value) {
+          return value instanceof Enumeration<?>;
+        }
+
+
+        @Override
+        public Object handle(Object value) {
+          return collect(((Enumeration<?>) value).asIterator());
+        }
+      },
+
+      // Arrays
+      new EntriesHandler() {
+        @Override
+        public boolean canHandle(Object value) {
+          return value.getClass().isArray();
+        }
+
+
+        @Override
+        public Object handle(Object value) {
+          return collect(
+              new Iterator<>() {
+                private final int length = Array.getLength(value);
+
+                private int index = 0;
+
+
+                @Override
+                public boolean hasNext() {
+                  return index < length;
+                }
+
+
+                @Override
+                public Object next() {
+                  if (hasNext()) {
+                    return Array.get(value, index++);
+                  }
+                  throw new NoSuchElementException();
+                }
+              });
+        }
+      }
+  );
+
   /** The instance of this function. */
   public static final ValueProcessor INSTANCE = new EntriesFunction();
+
+
+
+  private interface EntriesHandler {
+
+    boolean canHandle(Object value);
+
+    Object handle(Object value);
+
+  }
 
 
   private static List<Map.Entry<String, ?>> collect(Iterator<?> iterator) {
@@ -40,64 +162,15 @@ public class EntriesFunction implements ValueProcessor {
 
   @Override
   public Object apply(Data data, Parameter[] arguments) {
-    if (arguments.length != 1) {
-      throw new IllegalArgumentException("Must provide exactly one argument to this function");
-    }
+    ValueProcessor.verifyArity(arguments, 1, 1);
 
     Object value = arguments[0].getValue();
 
-    if (value == null) {
-      return null;
-    }
-
-    // Maps are obvious
-    if (value instanceof Map<?, ?> map) {
-      ArrayList<Map.Entry<?, ?>> list = new ArrayList<>(map.entrySet());
-      list.sort(Comparator.comparing(e -> String.valueOf(e.getKey())));
-      return list;
-    }
-
-    // Other collections are number -> value mappings
-
-    // Anything iterable
-    if (value instanceof Iterable<?> collection) {
-      return collect(collection.iterator());
-    }
-
-    // An iterator
-    if (value instanceof Iterator<?> iterator) {
-      return collect(iterator);
-    }
-
-    // An enumeration
-    if (value instanceof Enumeration<?> enumeration) {
-      return collect(enumeration.asIterator());
-    }
-
-    // An array
-    if (value.getClass().isArray()) {
-      return collect(
-          new Iterator<>() {
-            private final int length = Array.getLength(value);
-
-            private int index = 0;
-
-
-            @Override
-            public boolean hasNext() {
-              return index < length;
-            }
-
-
-            @Override
-            public Object next() {
-              if (hasNext()) {
-                return Array.get(value, index++);
-              }
-              throw new NoSuchElementException();
-            }
-          }
-      );
+    // Try the handlers
+    for (EntriesHandler entriesHandler : HANDLERS) {
+      if (entriesHandler.canHandle(value)) {
+        return entriesHandler.handle(value);
+      }
     }
 
     // Convert as a bean/record
